@@ -1,4 +1,4 @@
-# 🎓 AI-Powered Smart Attendance and Personalized Student Support System
+# KODURAMA ORU PROJECT
 
 > An intelligent ERP enhancement that combines **Computer Vision**, **Machine Learning**, **Artificial Intelligence**, and **Placement Assistance** to help students improve academic performance, develop technical skills, and become placement-ready.
 
