@@ -337,8 +337,8 @@ Outputs:
 
 # 🤝 Contributors
 
-* **Manojkumar R**
 * **Madhubalakumar S**
+* **Manojkumar R**
 * **Navatheeban MC**
 
 Department of Artificial Intelligence and Machine Learning
