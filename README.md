@@ -207,25 +207,44 @@ Then provides:
 # 📂 Project Structure
 
 ```text
-AI-Student-Support-System/
+S5-Mini-Project/
 │
-├── attendance/
-├── face_recognition/
-├── ai_agent/
-├── placement/
-├── coding_tracker/
-├── analytics/
-├── recommendation_engine/
-├── dashboard/
-├── database/
-├── models/
-├── notebooks/
-├── static/
-├── templates/
-├── app.py
-├── requirements.txt
+├── frontend/                     # React + TypeScript + Vite + Tailwind CSS
+│   ├── src/                      # UI Components, Pages & Data
+│   ├── public/                   # Public static assets
+│   ├── package.json              # Frontend dependencies
+│   └── vite.config.ts            # Vite configuration
+│
+├── backend/                      # Node.js + Express + TypeScript API
+│   ├── src/
+│   │   ├── controllers/          # Request handlers (authController)
+│   │   ├── middleware/           # Auth JWT verification middleware
+│   │   ├── routes/               # API routes (authRoutes)
+│   │   └── index.ts              # Express server entry point
+│   ├── package.json              # Backend dependencies
+│   └── tsconfig.json             # TypeScript configuration
+│
 └── README.md
 ```
+
+## ⚡ Quick Start
+
+### 1. Running the Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+The React frontend will be available at `http://localhost:5173`.
+
+### 2. Running the Backend
+```bash
+cd backend
+npm install
+npm run dev
+```
+The Express Authentication API will be available at `http://localhost:5000`.
+
 
 ---
 
