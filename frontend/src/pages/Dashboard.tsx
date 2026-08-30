@@ -18,6 +18,8 @@ import { summaryStats, upcomingEvents } from '../data/studentData';
 import { performanceTrend } from '../data/academicData';
 import { codingPlatforms } from '../data/codingData';
 
+import { useAuth } from '../context/AuthContext';
+
 const COLORS = ['#006747', '#E5E7EB'];
 
 const subjectColors: Record<string, string> = {
@@ -73,6 +75,7 @@ const item = {
 };
 
 export const Dashboard: React.FC = () => {
+  const { student } = useAuth();
   const [activeSubjects, setActiveSubjects] = useState({
     dataStructures: true,
     dbms: true,
@@ -90,19 +93,28 @@ export const Dashboard: React.FC = () => {
     setActiveSubjects((prev) => ({ ...prev, [key]: !prev[key as keyof typeof prev] }));
   };
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
+
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
           <h2 className="text-2xl font-bold text-charcoal">
-            Good evening, Arun 👋
+            {getGreeting()}, {student.firstName || student.name.split(' ')[0]} 👋
           </h2>
-          <p className="text-gray-500 text-sm mt-1">Here's your academic and career overview.</p>
+          <p className="text-gray-500 text-sm mt-1">Here's your academic and career overview for {student.department}.</p>
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-500 bg-white border border-gray-100 rounded-xl px-3 py-2">
           <CalendarCheck size={14} className="text-brand-500" />
-          <span className="font-medium">Friday, August 7, 2026</span>
+          <span className="font-medium">
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+          </span>
         </div>
       </motion.div>
 

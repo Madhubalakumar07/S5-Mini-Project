@@ -1,8 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Bell, Menu, X, AlertTriangle, CheckCircle, Calendar, Info, Sparkles } from 'lucide-react';
+import {
+  Search,
+  Bell,
+  Menu,
+  X,
+  AlertTriangle,
+  CheckCircle,
+  Calendar,
+  Info,
+  Sparkles,
+  LogOut,
+  User as UserIcon,
+  Settings as SettingsIcon,
+  ChevronDown,
+} from 'lucide-react';
 import { notifications } from '../../data/studentData';
+import { useAuth } from '../../context/AuthContext';
 
 interface TopbarProps {
   onMobileMenuToggle: () => void;
@@ -29,11 +44,17 @@ const notifIcons = {
 
 export const Topbar: React.FC<TopbarProps> = ({ onMobileMenuToggle, mobileMenuOpen }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { student, user, logout } = useAuth();
+
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [notifList, setNotifList] = useState(notifications);
+
   const notifRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   const page = pageInfo[location.pathname] || { title: 'CampusAI', breadcrumb: ['Home'] };
   const unread = notifList.filter((n) => !n.read).length;
@@ -43,6 +64,9 @@ export const Topbar: React.FC<TopbarProps> = ({ onMobileMenuToggle, mobileMenuOp
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
         setShowNotifications(false);
       }
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setShowUserMenu(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -50,6 +74,11 @@ export const Topbar: React.FC<TopbarProps> = ({ onMobileMenuToggle, mobileMenuOp
 
   const markAllRead = () => {
     setNotifList((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
   };
 
   return (
@@ -91,10 +120,13 @@ export const Topbar: React.FC<TopbarProps> = ({ onMobileMenuToggle, mobileMenuOp
               <input
                 autoFocus
                 type="text"
-                placeholder="Search..."
+                placeholder="Search subjects, topics, stats..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onBlur={() => { setSearchOpen(false); setSearchQuery(''); }}
+                onBlur={() => {
+                  setSearchOpen(false);
+                  setSearchQuery('');
+                }}
                 className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
               />
             </motion.div>
@@ -165,12 +197,74 @@ export const Topbar: React.FC<TopbarProps> = ({ onMobileMenuToggle, mobileMenuOp
           </AnimatePresence>
         </div>
 
-        {/* Profile */}
-        <div className="flex items-center gap-2 pl-2">
-          <div className="w-8 h-8 bg-brand-500 rounded-full flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-brand-300 transition-all">
-            <span className="text-white text-xs font-bold">AK</span>
-          </div>
-          <span className="hidden md:block text-sm font-medium text-charcoal">Arun Kumar</span>
+        {/* User Profile Menu Dropdown */}
+        <div className="relative pl-1" ref={userMenuRef}>
+          <button
+            onClick={() => setShowUserMenu((v) => !v)}
+            className="flex items-center gap-2.5 p-1.5 pr-2.5 rounded-xl hover:bg-gray-100 transition-colors group text-left"
+          >
+            <div className="w-8 h-8 bg-brand-500 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-sm ring-2 ring-brand-100 group-hover:ring-brand-300 transition-all">
+              {student.avatarInitials || 'ST'}
+            </div>
+            <div className="hidden md:block leading-tight">
+              <span className="text-xs font-semibold text-charcoal block truncate max-w-[120px]">
+                {student.name}
+              </span>
+              <span className="text-[10px] text-gray-400 block truncate max-w-[120px]">
+                {student.department || 'Student'}
+              </span>
+            </div>
+            <ChevronDown size={14} className="text-gray-400 hidden sm:block" />
+          </button>
+
+          <AnimatePresence>
+            {showUserMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                transition={{ duration: 0.15 }}
+                className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl border border-gray-100 shadow-xl z-50 p-2"
+              >
+                <div className="px-3 py-2.5 border-b border-gray-100 mb-1">
+                  <p className="text-xs font-bold text-charcoal truncate">{student.name}</p>
+                  <p className="text-[11px] text-gray-400 truncate">{student.email}</p>
+                  <span className="inline-block mt-1 text-[10px] font-semibold bg-brand-50 text-brand-600 px-2 py-0.5 rounded-md">
+                    Roll: {student.rollNumber}
+                  </span>
+                </div>
+
+                <Link
+                  to="/profile"
+                  onClick={() => setShowUserMenu(false)}
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <UserIcon size={15} className="text-gray-400" />
+                  My Profile
+                </Link>
+
+                <Link
+                  to="/settings"
+                  onClick={() => setShowUserMenu(false)}
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <SettingsIcon size={15} className="text-gray-400" />
+                  Account Settings
+                </Link>
+
+                <div className="h-px bg-gray-100 my-1" />
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors text-left"
+                >
+                  <LogOut size={15} className="text-red-500" />
+                  Log Out
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </header>

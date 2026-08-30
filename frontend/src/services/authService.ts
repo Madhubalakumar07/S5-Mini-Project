@@ -7,6 +7,11 @@ export interface RegisterPayload {
   email: string;
   password: string;
   role?: string;
+  department?: string;
+  rollNumber?: string;
+  batch?: string;
+  phone?: string;
+  cgpa?: number;
 }
 
 export interface LoginPayload {
@@ -19,6 +24,11 @@ export interface AuthUser {
   name: string;
   email: string;
   role: string;
+  department?: string;
+  rollNumber?: string;
+  batch?: string;
+  phone?: string;
+  cgpa?: number;
 }
 
 export interface AuthResponse {
@@ -45,6 +55,7 @@ export const authService = {
 
     if (result.token) {
       localStorage.setItem('auth_token', result.token);
+      localStorage.setItem('auth_user', JSON.stringify(result.user));
     }
 
     return result;
@@ -67,6 +78,7 @@ export const authService = {
 
     if (result.token) {
       localStorage.setItem('auth_token', result.token);
+      localStorage.setItem('auth_user', JSON.stringify(result.user));
     }
 
     return result;
@@ -90,16 +102,31 @@ export const authService = {
       throw new Error(result.message || 'Failed to fetch user session');
     }
 
+    if (result.user) {
+      localStorage.setItem('auth_user', JSON.stringify(result.user));
+    }
+
     return result;
   },
 
   // Logout
   logout() {
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_user');
   },
 
   // Check token existence
   getToken() {
     return localStorage.getItem('auth_token');
+  },
+
+  // Get locally stored user
+  getStoredUser(): AuthUser | null {
+    try {
+      const stored = localStorage.getItem('auth_user');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
   },
 };

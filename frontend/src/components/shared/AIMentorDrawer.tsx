@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, X, Send, ChevronRight } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 interface Message {
   id: string;
@@ -13,15 +14,6 @@ interface AIMentorDrawerProps {
   isOpen: boolean;
   onClose: () => void;
 }
-
-const initialMessages: Message[] = [
-  {
-    id: '1',
-    role: 'ai',
-    text: "Hi Arun! 👋 Based on your recent performance, I recommend focusing on Computer Networks and DSA this week. Your CN attendance is at 72.4% — below the 75% threshold.",
-    timestamp: 'Just now',
-  },
-];
 
 const quickActions = [
   'Create Study Plan',
@@ -38,7 +30,15 @@ const aiResponses: Record<string, string> = {
 };
 
 export const AIMentorDrawer: React.FC<AIMentorDrawerProps> = ({ isOpen, onClose }) => {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const { student } = useAuth();
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      role: 'ai',
+      text: `Hi ${student.firstName || student.name.split(' ')[0]}! 👋 Based on your recent performance in ${student.department}, I recommend focusing on Computer Networks and DSA this week. Your CN attendance is at 72.4% — below the 75% threshold.`,
+      timestamp: 'Just now',
+    },
+  ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 

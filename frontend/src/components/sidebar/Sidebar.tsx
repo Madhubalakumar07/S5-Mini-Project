@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import React from 'react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
@@ -12,8 +12,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
-  Wifi,
+  LogOut,
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -42,6 +43,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onMobileClose,
 }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { student, logout } = useAuth();
+
+  const handleLogout = () => {
+    onMobileClose();
+    logout();
+    navigate('/login', { replace: true });
+  };
 
   const NavItem = ({
     item,
@@ -97,7 +106,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className={`flex items-center gap-3 px-4 py-5 ${isCollapsed ? 'justify-center' : ''}`}>
-        <div className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center flex-shrink-0">
+        <div className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
           <Sparkles size={16} className="text-white" />
         </div>
         <AnimatePresence>
@@ -133,42 +142,56 @@ export const Sidebar: React.FC<SidebarProps> = ({
         ))}
       </nav>
 
-      {/* Profile Card */}
-      <AnimatePresence>
-        {!isCollapsed && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="mx-3 mb-4 p-3 bg-brand-50 rounded-xl border border-brand-100"
-          >
-            <div className="flex items-center gap-3">
-              <div className="relative flex-shrink-0">
-                <div className="w-9 h-9 bg-brand-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">AK</span>
+      {/* Profile Card & Logout */}
+      <div className="p-3 border-t border-gray-100">
+        <AnimatePresence>
+          {!isCollapsed ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="p-2.5 bg-brand-50/70 rounded-2xl border border-brand-100/80 mb-2"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="relative flex-shrink-0">
+                  <div className="w-8 h-8 bg-brand-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                    {student.avatarInitials || 'ST'}
+                  </div>
+                  <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold text-charcoal truncate">{student.name}</p>
+                  <p className="text-[11px] text-gray-500 truncate">
+                    {student.department} · {student.batch}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+            <div className="mb-2 flex justify-center">
+              <div className="relative">
+                <div className="w-8 h-8 bg-brand-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                  {student.avatarInitials || 'ST'}
                 </div>
                 <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white" />
               </div>
-              <div className="min-w-0">
-                <p className="text-xs font-semibold text-charcoal truncate">Arun Kumar</p>
-                <p className="text-xs text-gray-500 truncate">Computer Science · 2026</p>
-              </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>
 
-      {isCollapsed && (
-        <div className="mx-3 mb-4 flex justify-center">
-          <div className="relative">
-            <div className="w-9 h-9 bg-brand-500 rounded-full flex items-center justify-center">
-              <span className="text-white text-xs font-bold">AK</span>
-            </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white" />
-          </div>
-        </div>
-      )}
+        <button
+          type="button"
+          onClick={handleLogout}
+          className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-red-600 hover:bg-red-50 transition-colors ${
+            isCollapsed ? 'justify-center' : ''
+          }`}
+          title={isCollapsed ? 'Log Out' : undefined}
+        >
+          <LogOut size={16} className="text-red-500 flex-shrink-0" />
+          {!isCollapsed && <span>Log Out</span>}
+        </button>
+      </div>
     </div>
   );
 
