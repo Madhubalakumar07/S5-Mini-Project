@@ -148,3 +148,127 @@ export interface NavItem {
   path: string;
   icon: string;
 }
+
+// ─── Staff Portal Types ──────────────────────────────────────────
+export interface StaffProfile {
+  id: string;
+  name: string;
+  staffId: string;
+  email: string;
+  department: string;
+  designation: string;
+  phone: string;
+  office: string;
+  avatarInitials: string;
+  subjects: string[];
+}
+
+export interface StaffStudentSummary {
+  id: string;
+  name: string;
+  rollNumber: string;
+  department: string;
+  year: string;
+  attendance: number;
+  academicScore: number;
+  cgpa: number;
+  riskLevel: 'High' | 'Medium' | 'Low';
+  avatarInitials: string;
+  email: string;
+  phone: string;
+  aiInsight: string;
+  recommendedAction: string;
+  subjectAttendance?: Record<string, { attended: number; total: number; percentage: number }>;
+  subjectScores?: Record<string, { marks: number; maxMarks: number; grade: string }>;
+  placementStatus?: 'Placed' | 'Interviewing' | 'Eligible' | 'Ineligible' | 'Applied' | 'In Process' | 'Seeking';
+  placementEligibility?: 'Eligible' | 'Not Eligible' | 'Conditionally Eligible';
+  applicationStatus?: 'Applied' | 'Shortlisted' | 'Selected' | 'Rejected' | 'Not Applied';
+  skills?: string[];
+  company?: string;
+  ctc?: string;
+  driveDate?: string;
+}
+
+export interface AttendanceEntry {
+  studentId: string;
+  studentName: string;
+  rollNumber: string;
+  status: 'Present' | 'Absent' | 'Late';
+  remarks?: string;
+}
+
+export interface AttendanceSession {
+  id: string;
+  date: string;
+  subject: string;
+  faculty: string;
+  totalPresent: number;
+  totalStudents: number;
+  entries: AttendanceEntry[];
+}
+
+export interface AcademicMarkEntry {
+  id: string;
+  studentId: string;
+  studentName: string;
+  rollNumber: string;
+  subject: string;
+  assessmentType: 'Internal 1' | 'Internal 2' | 'Assignment' | 'Model Exam' | 'End Semester';
+  marks: number;
+  maxMarks: number;
+  grade: string;
+  date: string;
+}
+
+export interface StaffPlacementStudent {
+  id: string;
+  name: string;
+  rollNumber: string;
+  cgpa: number;
+  skills: string[];
+  eligibility: 'Eligible' | 'Not Eligible' | 'Conditionally Eligible';
+  applicationStatus: 'Applied' | 'Shortlisted' | 'Selected' | 'Rejected' | 'Not Applied';
+  placementStatus: 'Placed' | 'In Process' | 'Seeking' | 'Higher Studies';
+  company?: string;
+  ctc?: string;
+  driveDate?: string;
+}
+
+export interface AIStudentSupportCase {
+  id: string;
+  studentId: string;
+  studentName: string;
+  rollNumber: string;
+  department: string;
+  attendance: number;
+  academicScore: number;
+  riskLevel: 'High' | 'Medium' | 'Low';
+  aiInsight: string;
+  recommendedAction: string;
+  staffRemarks?: string;
+  intervention?: string;
+  followUpDate?: string;
+  supportStatus: 'Open' | 'In Progress' | 'Resolved' | 'Monitoring';
+  lastUpdated?: string;
+}
+
+export interface Announcement {
+  id: string;
+  title: string;
+  description: string;
+  audience: 'All Students' | 'Computer Science' | 'AI & Data Science' | '3rd Year' | 'Final Year';
+  date: string;
+  author: string;
+  category: 'General' | 'Exam' | 'Placement' | 'Attendance' | 'Event';
+  pinned?: boolean;
+}
+
+export interface StaffReportSummary {
+  id: string;
+  title: string;
+  category: 'Attendance' | 'Academics' | 'At-Risk' | 'Placement';
+  generatedDate: string;
+  recordCount: number;
+  description: string;
+  summaryMetrics: Record<string, string | number>;
+}

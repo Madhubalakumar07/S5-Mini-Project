@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-const DEMO_ACCOUNTS = [
+const STUDENT_DEMO_ACCOUNTS = [
   {
     name: 'Arun Kumar',
     email: 'arun.kumar@college.edu',
@@ -29,6 +29,7 @@ const DEMO_ACCOUNTS = [
     roll: '21CS001',
     cgpa: 8.4,
     avatar: 'AK',
+    role: 'student',
     color: 'bg-emerald-600',
   },
   {
@@ -38,6 +39,7 @@ const DEMO_ACCOUNTS = [
     roll: '21AD045',
     cgpa: 9.1,
     avatar: 'PS',
+    role: 'student',
     color: 'bg-blue-600',
   },
   {
@@ -47,7 +49,31 @@ const DEMO_ACCOUNTS = [
     roll: '20EC089',
     cgpa: 8.2,
     avatar: 'RV',
+    role: 'student',
     color: 'bg-purple-600',
+  },
+];
+
+const STAFF_DEMO_ACCOUNTS = [
+  {
+    name: 'Dr. Priya Sharma',
+    email: 'priya.faculty@college.edu',
+    dept: 'CSE · Class Advisor',
+    roll: 'STF-CS-042',
+    designation: 'Associate Professor',
+    avatar: 'PS',
+    role: 'staff',
+    color: 'bg-indigo-600',
+  },
+  {
+    name: 'Prof. Rajesh Kumar',
+    email: 'rajesh.faculty@college.edu',
+    dept: 'AI & DS · HOD',
+    roll: 'STF-AD-018',
+    designation: 'Professor & HOD',
+    avatar: 'RK',
+    role: 'staff',
+    color: 'bg-violet-600',
   },
 ];
 
@@ -61,11 +87,13 @@ const DEPARTMENTS = [
 ];
 
 export const Login: React.FC = () => {
-  const { login, register, isAuthenticated } = useAuth();
+  const { login, register, isAuthenticated, role } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [demoTab, setDemoTab] = useState<'student' | 'staff'>('student');
+  const [regRole, setRegRole] = useState<'student' | 'staff'>('student');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -77,15 +105,18 @@ export const Login: React.FC = () => {
   const [name, setName] = useState('');
   const [department, setDepartment] = useState('Computer Science');
   const [rollNumber, setRollNumber] = useState('');
+  const [designation, setDesignation] = useState('Assistant Professor');
   const [phone, setPhone] = useState('');
 
-  // If already authenticated, redirect to dashboard
+  // If already authenticated, redirect to appropriate role dashboard
   React.useEffect(() => {
     if (isAuthenticated) {
-      const from = (location.state as any)?.from?.pathname || '/dashboard';
-      navigate(from, { replace: true });
+      const defaultDest = role === 'staff' ? '/staff/dashboard' : '/dashboard';
+      const from = (location.state as any)?.from?.pathname;
+      const target = from && from !== '/login' ? from : defaultDest;
+      navigate(target, { replace: true });
     }
-  }, [isAuthenticated, navigate, location]);
+  }, [isAuthenticated, role, navigate, location]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,19 +127,24 @@ export const Login: React.FC = () => {
     try {
       if (mode === 'login') {
         await login({ email, password });
-        navigate('/dashboard', { replace: true });
+        // Check email/role to route immediately
+        const isStaffUser = email.toLowerCase().includes('faculty') || email.toLowerCase().includes('staff');
+        navigate(isStaffUser ? '/staff/dashboard' : '/dashboard', { replace: true });
       } else {
         await register({
           name,
           email,
           password,
+          role: regRole,
           department,
-          rollNumber,
+          rollNumber: regRole === 'staff' ? (rollNumber || 'STF-CS-099') : rollNumber,
+          staffId: regRole === 'staff' ? (rollNumber || 'STF-CS-099') : undefined,
+          designation: regRole === 'staff' ? designation : undefined,
           phone,
         });
         setSuccessMsg('Account created successfully! Welcome aboard.');
         setTimeout(() => {
-          navigate('/dashboard', { replace: true });
+          navigate(regRole === 'staff' ? '/staff/dashboard' : '/dashboard', { replace: true });
         }, 600);
       }
     } catch (err: any) {
@@ -118,26 +154,29 @@ export const Login: React.FC = () => {
     }
   };
 
-  const handleQuickLogin = async (demo: (typeof DEMO_ACCOUNTS)[0]) => {
+  const handleQuickLogin = async (demo: (typeof STUDENT_DEMO_ACCOUNTS)[0] | (typeof STAFF_DEMO_ACCOUNTS)[0]) => {
     setEmail(demo.email);
     setPassword('password123');
     setError(null);
     setLoading(true);
+    const targetUrl = demo.role === 'staff' ? '/staff/dashboard' : '/dashboard';
     try {
-      await login({ email: demo.email, password: 'password123' });
-      navigate('/dashboard', { replace: true });
+      await login({ email: demo.email, password: 'password123', role: demo.role });
+      navigate(targetUrl, { replace: true });
     } catch (err: any) {
-      // If backend mock is freshly restarted and demo user wasn't registered in DB, register directly
       try {
         await register({
           name: demo.name,
           email: demo.email,
           password: 'password123',
+          role: demo.role,
           department: demo.dept,
           rollNumber: demo.roll,
-          cgpa: demo.cgpa,
+          staffId: demo.role === 'staff' ? demo.roll : undefined,
+          cgpa: (demo as any).cgpa,
+          designation: (demo as any).designation,
         });
-        navigate('/dashboard', { replace: true });
+        navigate(targetUrl, { replace: true });
       } catch (regErr: any) {
         setError(regErr.message || 'Quick login failed.');
       }
@@ -265,36 +304,88 @@ export const Login: React.FC = () => {
             {/* Quick Demo Accounts Selection */}
             {mode === 'login' && (
               <div className="mb-6 bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
-                <div className="flex items-center justify-between mb-2.5">
+                <div className="flex items-center justify-between mb-3">
                   <span className="text-xs font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
                     <Sparkles size={13} className="text-indigo-600" />
                     Quick 1-Click Demo Profiles
                   </span>
-                  <span className="text-[11px] text-slate-400 font-medium">Click to switch user</span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  {DEMO_ACCOUNTS.map((demo) => (
+
+                  {/* Role selector tabs for demo profiles */}
+                  <div className="flex bg-slate-200/80 p-0.5 rounded-lg text-[11px] font-bold">
                     <button
-                      key={demo.email}
                       type="button"
-                      onClick={() => handleQuickLogin(demo)}
-                      disabled={loading}
-                      className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-slate-200 hover:border-indigo-500 hover:shadow-sm transition-all text-left group"
+                      onClick={() => setDemoTab('student')}
+                      className={`px-2.5 py-1 rounded-md transition-all ${
+                        demoTab === 'student'
+                          ? 'bg-white text-indigo-600 shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
                     >
-                      <div
-                        className={`w-7 h-7 ${demo.color} rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}
-                      >
-                        {demo.avatar}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs font-bold text-slate-900 truncate group-hover:text-indigo-600">
-                          {demo.name}
-                        </p>
-                        <p className="text-[10px] text-slate-400 truncate font-medium">{demo.dept}</p>
-                      </div>
+                      Students (3)
                     </button>
-                  ))}
+                    <button
+                      type="button"
+                      onClick={() => setDemoTab('staff')}
+                      className={`px-2.5 py-1 rounded-md transition-all ${
+                        demoTab === 'staff'
+                          ? 'bg-white text-indigo-600 shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      Staff / Faculty (2)
+                    </button>
+                  </div>
                 </div>
+
+                {demoTab === 'student' ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {STUDENT_DEMO_ACCOUNTS.map((demo) => (
+                      <button
+                        key={demo.email}
+                        type="button"
+                        onClick={() => handleQuickLogin(demo)}
+                        disabled={loading}
+                        className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-slate-200 hover:border-indigo-500 hover:shadow-sm transition-all text-left group"
+                      >
+                        <div
+                          className={`w-7 h-7 ${demo.color} rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}
+                        >
+                          {demo.avatar}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-bold text-slate-900 truncate group-hover:text-indigo-600">
+                            {demo.name}
+                          </p>
+                          <p className="text-[10px] text-slate-400 truncate font-medium">{demo.dept}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {STAFF_DEMO_ACCOUNTS.map((demo) => (
+                      <button
+                        key={demo.email}
+                        type="button"
+                        onClick={() => handleQuickLogin(demo)}
+                        disabled={loading}
+                        className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-indigo-200/90 hover:border-indigo-500 hover:shadow-sm transition-all text-left group bg-gradient-to-r from-indigo-50/40 to-white"
+                      >
+                        <div
+                          className={`w-7 h-7 ${demo.color} rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}
+                        >
+                          {demo.avatar}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-bold text-slate-900 truncate group-hover:text-indigo-600">
+                            {demo.name}
+                          </p>
+                          <p className="text-[10px] text-indigo-600 truncate font-semibold">{demo.dept}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
@@ -325,6 +416,31 @@ export const Login: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               {mode === 'register' && (
                 <>
+                  {/* Role Selector in Registration */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-900 mb-1">Account Role</label>
+                    <div className="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-xl">
+                      <button
+                        type="button"
+                        onClick={() => setRegRole('student')}
+                        className={`py-1.5 text-xs font-bold rounded-lg transition-all ${
+                          regRole === 'student' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500'
+                        }`}
+                      >
+                        Student Account
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setRegRole('staff')}
+                        className={`py-1.5 text-xs font-bold rounded-lg transition-all ${
+                          regRole === 'staff' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500'
+                        }`}
+                      >
+                        Faculty / Staff Account
+                      </button>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-xs font-bold text-slate-900 mb-1">
                       Full Name <span className="text-rose-500">*</span>
@@ -336,7 +452,7 @@ export const Login: React.FC = () => {
                         required
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="e.g. John Doe"
+                        placeholder={regRole === 'staff' ? 'e.g. Dr. Priya Sharma' : 'e.g. Arun Kumar'}
                         className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                       />
                     </div>
@@ -362,19 +478,34 @@ export const Login: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-900 mb-1">Roll / Register No</label>
+                      <label className="block text-xs font-bold text-slate-900 mb-1">
+                        {regRole === 'staff' ? 'Staff Employee ID' : 'Roll / Register No'}
+                      </label>
                       <div className="relative">
                         <Hash size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                         <input
                           type="text"
                           value={rollNumber}
                           onChange={(e) => setRollNumber(e.target.value)}
-                          placeholder="e.g. 21CS102"
+                          placeholder={regRole === 'staff' ? 'e.g. STF-CS-042' : 'e.g. 21CS102'}
                           className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                         />
                       </div>
                     </div>
                   </div>
+
+                  {regRole === 'staff' && (
+                    <div>
+                      <label className="block text-xs font-bold text-slate-900 mb-1">Designation</label>
+                      <input
+                        type="text"
+                        value={designation}
+                        onChange={(e) => setDesignation(e.target.value)}
+                        placeholder="e.g. Associate Professor & Class Advisor"
+                        className="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                      />
+                    </div>
+                  )}
                 </>
               )}
 

@@ -56,6 +56,28 @@ const users: User[] = [
     phone: '+91 98456 78901',
     cgpa: 8.2,
   },
+  {
+    id: 'staff_1',
+    name: 'Dr. Priya Sharma',
+    email: 'priya.faculty@college.edu',
+    passwordHash: defaultHash,
+    role: 'staff',
+    department: 'Computer Science & Engineering',
+    rollNumber: 'STF-CS-042',
+    batch: 'Faculty',
+    phone: '+91 94432 18765',
+  },
+  {
+    id: 'staff_2',
+    name: 'Prof. Rajesh Kumar',
+    email: 'rajesh.faculty@college.edu',
+    passwordHash: defaultHash,
+    role: 'staff',
+    department: 'Artificial Intelligence & Data Science',
+    rollNumber: 'STF-AD-018',
+    batch: 'Faculty',
+    phone: '+91 94432 18766',
+  },
 ];
 
 const generateToken = (user: User) => {
