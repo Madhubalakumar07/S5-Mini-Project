@@ -66,10 +66,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         to={item.path}
         onClick={onMobileClose}
         className={({ isActive: active }) =>
-          `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group relative ${
+          `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 group relative ${
             active
-              ? 'bg-brand-500 text-white shadow-sm'
-              : 'text-gray-600 hover:bg-brand-50 hover:text-brand-600'
+              ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md shadow-indigo-500/25'
+              : 'text-slate-600 hover:bg-indigo-50/80 hover:text-indigo-600'
           }`
         }
         title={isCollapsed ? item.label : undefined}
@@ -77,7 +77,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <Icon
           size={18}
           className={`flex-shrink-0 transition-colors ${
-            isActive ? 'text-white' : 'text-gray-400 group-hover:text-brand-500'
+            isActive ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600'
           }`}
         />
         <AnimatePresence>
@@ -94,7 +94,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
         </AnimatePresence>
         {isCollapsed && (
-          <div className="absolute left-full ml-2 px-2 py-1 bg-charcoal text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+          <div className="absolute left-full ml-2 px-2 py-1 bg-slate-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
             {item.label}
           </div>
         )}
@@ -103,11 +103,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const SidebarContent = ({ isCollapsed }: { isCollapsed: boolean }) => (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-white">
       {/* Logo */}
       <div className={`flex items-center gap-3 px-4 py-5 ${isCollapsed ? 'justify-center' : ''}`}>
-        <div className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
-          <Sparkles size={16} className="text-white" />
+        <div className="w-9 h-9 bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md shadow-indigo-500/25">
+          <Sparkles size={18} className="text-white" />
         </div>
         <AnimatePresence>
           {!isCollapsed && (
@@ -118,8 +118,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <p className="text-sm font-bold text-charcoal whitespace-nowrap">CampusAI</p>
-              <p className="text-xs text-gray-400 whitespace-nowrap">Student Support</p>
+              <p className="text-base font-extrabold text-slate-900 tracking-tight whitespace-nowrap">CampusAI</p>
+              <p className="text-xs text-slate-400 font-medium whitespace-nowrap">Student Support</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -133,7 +133,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Divider */}
         <div className={`my-4 ${isCollapsed ? 'mx-2' : 'mx-0'}`}>
-          <div className="h-px bg-gray-100" />
+          <div className="h-px bg-slate-100" />
         </div>
 
         {/* Secondary Nav */}
@@ -143,7 +143,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* Profile Card & Logout */}
-      <div className="p-3 border-t border-gray-100">
+      <div className="p-3 border-t border-slate-100">
         <AnimatePresence>
           {!isCollapsed ? (
             <motion.div
@@ -151,18 +151,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="p-2.5 bg-brand-50/70 rounded-2xl border border-brand-100/80 mb-2"
+              className="p-2.5 bg-slate-50 rounded-2xl border border-slate-200/80 mb-2"
             >
               <div className="flex items-center gap-2.5">
                 <div className="relative flex-shrink-0">
-                  <div className="w-8 h-8 bg-brand-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                  <div className="w-8 h-8 bg-gradient-to-tr from-indigo-600 to-violet-600 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm">
                     {student.avatarInitials || 'ST'}
                   </div>
                   <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold text-charcoal truncate">{student.name}</p>
-                  <p className="text-[11px] text-gray-500 truncate">
+                  <p className="text-xs font-bold text-slate-900 truncate">{student.name}</p>
+                  <p className="text-[11px] text-slate-500 truncate">
                     {student.department} · {student.batch}
                   </p>
                 </div>
@@ -171,7 +171,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           ) : (
             <div className="mb-2 flex justify-center">
               <div className="relative">
-                <div className="w-8 h-8 bg-brand-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                <div className="w-8 h-8 bg-gradient-to-tr from-indigo-600 to-violet-600 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm">
                   {student.avatarInitials || 'ST'}
                 </div>
                 <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white" />

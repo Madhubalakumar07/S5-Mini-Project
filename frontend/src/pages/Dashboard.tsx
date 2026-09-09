@@ -20,13 +20,11 @@ import { codingPlatforms } from '../data/codingData';
 
 import { useAuth } from '../context/AuthContext';
 
-const COLORS = ['#006747', '#E5E7EB'];
-
 const subjectColors: Record<string, string> = {
-  dataStructures: '#006747',
-  dbms: '#8CAB18',
-  os: '#F89F1B',
-  cn: '#EF4444',
+  dataStructures: '#6366F1',
+  dbms: '#8B5CF6',
+  os: '#06B6D4',
+  cn: '#F59E0B',
 };
 
 const taskCards = [
@@ -105,14 +103,14 @@ export const Dashboard: React.FC = () => {
       {/* Header */}
       <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
-          <h2 className="text-2xl font-bold text-charcoal">
+          <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
             {getGreeting()}, {student.firstName || student.name.split(' ')[0]} 👋
           </h2>
-          <p className="text-gray-500 text-sm mt-1">Here's your academic and career overview for {student.department}.</p>
+          <p className="text-slate-500 text-sm mt-1 font-medium">Here's your academic and career overview for {student.department}.</p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-500 bg-white border border-gray-100 rounded-xl px-3 py-2">
-          <CalendarCheck size={14} className="text-brand-500" />
-          <span className="font-medium">
+        <div className="flex items-center gap-2 text-sm text-slate-600 bg-white border border-slate-200/80 shadow-xs rounded-xl px-3.5 py-2">
+          <CalendarCheck size={15} className="text-indigo-600" />
+          <span className="font-semibold text-slate-700">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
           </span>
         </div>
@@ -128,9 +126,10 @@ export const Dashboard: React.FC = () => {
           trend="+2.1% this month"
           trendPositive
           icon={<CalendarCheck size={18} />}
+          accentColor="bg-cyan-50 text-cyan-600 border border-cyan-200/80"
         >
-          <ProgressRing percentage={92.4} size={64} strokeWidth={5} className="mx-auto mt-1">
-            <span className="text-[10px] font-bold text-brand-600">92%</span>
+          <ProgressRing percentage={92.4} size={64} strokeWidth={5} color="#06B6D4" trackColor="#ECFEFF" className="mx-auto mt-1">
+            <span className="text-[10px] font-extrabold text-cyan-700">92%</span>
           </ProgressRing>
         </StatCard>
 
@@ -140,11 +139,12 @@ export const Dashboard: React.FC = () => {
           value="8.4 CGPA"
           subtitle="↑ 0.3 this semester"
           icon={<BookOpen size={18} />}
+          accentColor="bg-indigo-50 text-indigo-600 border border-indigo-200/80"
         >
           <div className="h-10 mt-1">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={[{v:7.8},{v:8.1},{v:8.0},{v:8.3},{v:8.7}]} margin={{top:2,right:0,left:0,bottom:0}}>
-                <Line type="monotone" dataKey="v" stroke="#006747" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="v" stroke="#6366F1" strokeWidth={2.5} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -156,10 +156,11 @@ export const Dashboard: React.FC = () => {
           value="248 Problems"
           subtitle="12 solved this week"
           icon={<Code2 size={18} />}
+          accentColor="bg-amber-50 text-amber-600 border border-amber-200/80"
         >
           <div className="flex items-center gap-1.5 mt-1">
-            <Flame size={14} className="text-orange-500" />
-            <span className="text-xs font-semibold text-orange-600">18 day streak</span>
+            <Flame size={15} className="text-amber-500 fill-amber-500" />
+            <span className="text-xs font-bold text-amber-700">18 day streak</span>
           </div>
         </StatCard>
 
@@ -169,38 +170,40 @@ export const Dashboard: React.FC = () => {
           value="78%"
           subtitle="Good Progress"
           icon={<Briefcase size={18} />}
+          accentColor="bg-purple-50 text-purple-600 border border-purple-200/80"
         >
-          <ProgressBar percentage={78} height={6} className="mt-2" />
+          <ProgressBar percentage={78} height={6} color="#8B5CF6" trackColor="#F5F3FF" className="mt-2" />
         </StatCard>
       </motion.div>
 
       {/* AI Insight */}
+      {/* AI Insight */}
       {!aiDismissed && (
         <motion.div variants={item}>
-          <div className="card p-5 border-l-4 border-brand-500">
+          <div className="card p-5 border-l-4 border-indigo-600 bg-gradient-to-r from-indigo-50/70 via-white to-white border-t border-r border-b border-slate-200/80">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-brand-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Sparkles size={20} className="text-brand-500" />
+              <div className="w-11 h-11 bg-gradient-to-tr from-indigo-600 to-violet-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-md shadow-indigo-500/20 text-white">
+                <Sparkles size={20} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1.5">
-                  <h3 className="font-semibold text-charcoal">AI Study Assistant</h3>
+                  <h3 className="font-bold text-slate-900">AI Study Assistant</h3>
                   <Badge variant="brand" size="sm">AI INSIGHT</Badge>
                 </div>
-                <p className="text-sm text-gray-600 mb-3">
-                  Your attendance is strong, but <span className="font-medium text-charcoal">Data Structures</span> performance
-                  has dropped <span className="text-red-600 font-medium">8%</span> over the last two assessments.
+                <p className="text-sm text-slate-600 mb-3 leading-relaxed">
+                  Your attendance is strong, but <span className="font-bold text-slate-900">Data Structures</span> performance
+                  has dropped <span className="text-rose-600 font-bold">8%</span> over the last two assessments.
                 </p>
                 <div className="mb-4">
-                  <p className="text-xs font-semibold text-gray-700 mb-2">Recommended actions</p>
+                  <p className="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">Recommended actions</p>
                   <ul className="space-y-1.5">
                     {[
                       'Practice 5 medium-level DSA problems today',
                       'Review Trees and Graphs chapter',
                       'Attend the upcoming DSA revision session',
                     ].map((action, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                        <span className="w-4 h-4 bg-brand-50 text-brand-600 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
+                      <li key={i} className="flex items-start gap-2 text-sm text-slate-700 font-medium">
+                        <span className="w-4 h-4 bg-indigo-600 text-white rounded-full flex items-center justify-center text-[10px] font-extrabold flex-shrink-0 mt-0.5 shadow-xs">
                           {i + 1}
                         </span>
                         {action}
@@ -233,24 +236,25 @@ export const Dashboard: React.FC = () => {
             <motion.div
               key={task.id}
               whileHover={{ y: -2 }}
-              className="card p-4 cursor-pointer"
+              className="card p-4 cursor-pointer hover:border-indigo-200 transition-all"
             >
               <div className="flex items-start justify-between mb-3">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                  task.badge === 'warning' ? 'bg-amber-50 text-amber-600' :
-                  task.badge === 'brand' ? 'bg-brand-50 text-brand-600' :
-                  'bg-emerald-50 text-emerald-600'
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 border ${
+                  task.badge === 'warning' ? 'bg-amber-50 text-amber-600 border-amber-200/80' :
+                  task.badge === 'brand' ? 'bg-indigo-50 text-indigo-600 border-indigo-200/80' :
+                  'bg-emerald-50 text-emerald-600 border-emerald-200/80'
                 }`}>
                   {task.icon}
                 </div>
                 <Badge variant={task.badge} size="sm">{task.category}</Badge>
               </div>
-              <h4 className="text-sm font-semibold text-charcoal mb-1">{task.title}</h4>
-              <p className="text-xs text-gray-500 mb-3">{task.due}</p>
+              <h4 className="text-sm font-bold text-slate-900 mb-1">{task.title}</h4>
+              <p className="text-xs text-slate-500 font-medium mb-3">{task.due}</p>
               <ProgressBar
                 percentage={task.progress}
-                height={5}
-                color={task.badge === 'warning' ? '#F59E0B' : task.badge === 'brand' ? '#006747' : '#10B981'}
+                height={6}
+                color={task.badge === 'warning' ? '#F59E0B' : task.badge === 'brand' ? '#6366F1' : '#10B981'}
+                trackColor={task.badge === 'warning' ? '#FFFBEB' : task.badge === 'brand' ? '#EEF2FF' : '#ECFDF5'}
                 showLabel
               />
               <Button variant="secondary" size="sm" className="w-full mt-3">
@@ -274,10 +278,10 @@ export const Dashboard: React.FC = () => {
                 <button
                   key={key}
                   onClick={() => toggleSubject(key)}
-                  className={`text-xs px-2 py-1 rounded-full border transition-all ${
+                  className={`text-xs px-2.5 py-1 rounded-full border font-semibold transition-all ${
                     activeSubjects[key as keyof typeof activeSubjects]
-                      ? 'border-transparent text-white'
-                      : 'border-gray-200 text-gray-400 bg-white'
+                      ? 'border-transparent text-white shadow-xs'
+                      : 'border-slate-200 text-slate-400 bg-white'
                   }`}
                   style={activeSubjects[key as keyof typeof activeSubjects] ? { backgroundColor: subjectColors[key] } : {}}
                 >
@@ -290,23 +294,23 @@ export const Dashboard: React.FC = () => {
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={performanceTrend} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
-                <XAxis dataKey="assessment" tick={{ fontSize: 11, fill: '#9CA3AF' }} />
-                <YAxis domain={[60, 100]} tick={{ fontSize: 11, fill: '#9CA3AF' }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                <XAxis dataKey="assessment" tick={{ fontSize: 11, fill: '#64748B', fontWeight: 500 }} />
+                <YAxis domain={[60, 100]} tick={{ fontSize: 11, fill: '#64748B', fontWeight: 500 }} />
                 <Tooltip
-                  contentStyle={{ borderRadius: 8, border: '1px solid #E5E7EB', fontSize: 12 }}
+                  contentStyle={{ borderRadius: 12, border: '1px solid #E2E8F0', fontSize: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
                 />
                 {activeSubjects.dataStructures && (
-                  <Line type="monotone" dataKey="dataStructures" stroke={subjectColors.dataStructures} strokeWidth={2} dot={{ r: 3 }} name="DSA" />
+                  <Line type="monotone" dataKey="dataStructures" stroke={subjectColors.dataStructures} strokeWidth={2.5} dot={{ r: 3.5, strokeWidth: 2 }} name="DSA" />
                 )}
                 {activeSubjects.dbms && (
-                  <Line type="monotone" dataKey="dbms" stroke={subjectColors.dbms} strokeWidth={2} dot={{ r: 3 }} name="DBMS" />
+                  <Line type="monotone" dataKey="dbms" stroke={subjectColors.dbms} strokeWidth={2.5} dot={{ r: 3.5, strokeWidth: 2 }} name="DBMS" />
                 )}
                 {activeSubjects.os && (
-                  <Line type="monotone" dataKey="os" stroke={subjectColors.os} strokeWidth={2} dot={{ r: 3 }} name="OS" />
+                  <Line type="monotone" dataKey="os" stroke={subjectColors.os} strokeWidth={2.5} dot={{ r: 3.5, strokeWidth: 2 }} name="OS" />
                 )}
                 {activeSubjects.cn && (
-                  <Line type="monotone" dataKey="cn" stroke={subjectColors.cn} strokeWidth={2} dot={{ r: 3 }} name="CN" />
+                  <Line type="monotone" dataKey="cn" stroke={subjectColors.cn} strokeWidth={2.5} dot={{ r: 3.5, strokeWidth: 2 }} name="CN" />
                 )}
               </LineChart>
             </ResponsiveContainer>
@@ -329,20 +333,20 @@ export const Dashboard: React.FC = () => {
                     endAngle={-270}
                     dataKey="value"
                   >
-                    <Cell fill="#006747" />
-                    <Cell fill="#E5F9F2" />
+                    <Cell fill="#6366F1" />
+                    <Cell fill="#EEF2FF" />
                   </Pie>
                   <Tooltip formatter={(v) => `${v}%`} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
             <div className="text-center -mt-2">
-              <p className="text-2xl font-bold text-charcoal">92.4%</p>
-              <p className="text-xs text-gray-500 mt-0.5">Present rate</p>
+              <p className="text-2xl font-extrabold text-slate-900 tracking-tight">92.4%</p>
+              <p className="text-xs text-slate-500 font-medium mt-0.5">Present rate</p>
             </div>
-            <div className="w-full mt-3 p-3 bg-brand-50 rounded-xl text-center">
-              <p className="text-xs text-brand-700 font-medium">Min required: 75%</p>
-              <p className="text-xs text-brand-600 mt-0.5">✅ Safely above threshold</p>
+            <div className="w-full mt-3 p-3 bg-indigo-50/80 border border-indigo-100 rounded-xl text-center">
+              <p className="text-xs text-indigo-900 font-bold">Min required: 75%</p>
+              <p className="text-xs text-indigo-700 font-semibold mt-0.5">✅ Safely above threshold</p>
             </div>
           </div>
         </ChartCard>
@@ -358,7 +362,7 @@ export const Dashboard: React.FC = () => {
               <motion.div
                 key={p.name}
                 whileHover={{ y: -2 }}
-                className="card p-4"
+                className="card p-4 hover:border-slate-300 transition-all"
                 style={{ borderTop: `3px solid ${p.color}` }}
               >
                 <div className="flex items-center justify-between mb-2">
@@ -368,15 +372,15 @@ export const Dashboard: React.FC = () => {
                   >
                     {p.name}
                   </span>
-                  <ExternalLink size={12} className="text-gray-300" />
+                  <ExternalLink size={12} className="text-slate-400" />
                 </div>
-                <p className="text-lg font-bold text-charcoal">
+                <p className="text-lg font-extrabold text-slate-900">
                   {p.name === 'GitHub' ? `${p.contributions}` : `${p.solved}`}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-slate-500 font-medium">
                   {p.name === 'GitHub' ? 'contributions' : 'problems solved'}
                 </p>
-                <p className="text-xs text-emerald-600 font-medium mt-1">+{p.monthlyGain} this month</p>
+                <p className="text-xs text-emerald-600 font-bold mt-1">+{p.monthlyGain} this month</p>
               </motion.div>
             ))}
           </div>
@@ -385,21 +389,21 @@ export const Dashboard: React.FC = () => {
         {/* Upcoming Events */}
         <div>
           <h3 className="section-title mb-3">Upcoming</h3>
-          <div className="card divide-y divide-gray-50">
+          <div className="card divide-y divide-slate-100 overflow-hidden">
             {upcomingEvents.map((event, i) => (
               <motion.div
                 key={i}
-                whileHover={{ backgroundColor: '#F9FAF9' }}
-                className="flex items-center gap-4 px-4 py-3.5 cursor-pointer"
+                whileHover={{ backgroundColor: '#F8FAFC' }}
+                className="flex items-center gap-4 px-4 py-3.5 cursor-pointer transition-colors"
               >
                 <div className="text-center w-12 flex-shrink-0">
-                  <p className="text-xs text-gray-400 font-medium">{event.date.split(' ')[0]}</p>
-                  <p className="text-lg font-bold text-charcoal leading-tight">{event.date.split(' ')[1]}</p>
+                  <p className="text-xs text-slate-400 font-semibold">{event.date.split(' ')[0]}</p>
+                  <p className="text-lg font-extrabold text-slate-900 leading-tight">{event.date.split(' ')[1]}</p>
                 </div>
-                <div className="w-px h-8 bg-gray-100 flex-shrink-0" />
+                <div className="w-px h-8 bg-slate-200 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-charcoal truncate">{event.event}</p>
-                  <p className="text-xs text-gray-400 mt-0.5 capitalize">{event.type}</p>
+                  <p className="text-sm font-bold text-slate-900 truncate">{event.event}</p>
+                  <p className="text-xs text-slate-500 mt-0.5 capitalize font-medium">{event.type}</p>
                 </div>
                 <span className="text-lg">{event.icon}</span>
               </motion.div>

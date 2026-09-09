@@ -147,11 +147,11 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden">
       {/* Background glowing gradients */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-brand-500/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-violet-600/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
@@ -160,29 +160,29 @@ export const Login: React.FC = () => {
         className="w-full max-w-5xl bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden grid grid-cols-1 lg:grid-cols-12 relative z-10"
       >
         {/* Left Visual / Branding Column */}
-        <div className="lg:col-span-5 bg-gradient-to-br from-brand-600 via-brand-700 to-slate-900 p-8 lg:p-10 text-white flex flex-col justify-between relative overflow-hidden">
+        <div className="lg:col-span-5 bg-gradient-to-br from-indigo-600 via-indigo-700 to-slate-900 p-8 lg:p-10 text-white flex flex-col justify-between relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-2xl" />
 
           {/* Logo & Header */}
           <div>
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-inner">
-                <Sparkles size={22} className="text-emerald-300" />
+                <Sparkles size={22} className="text-indigo-200" />
               </div>
               <div>
                 <h1 className="text-xl font-black tracking-tight">CampusAI</h1>
-                <p className="text-xs text-emerald-200/80 font-medium">Student Performance & Career Suite</p>
+                <p className="text-xs text-indigo-200/80 font-medium">Student Performance & Career Suite</p>
               </div>
             </div>
 
             <div className="mt-8">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-emerald-300 border border-white/15">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-indigo-200 border border-white/15">
                 <ShieldCheck size={13} /> Institutional Access Only
               </span>
               <h2 className="text-2xl lg:text-3xl font-extrabold mt-3 leading-snug">
                 Your entire academic journey in one smart hub.
               </h2>
-              <p className="text-sm text-gray-300 mt-2.5 leading-relaxed">
+              <p className="text-sm text-slate-200/90 mt-2.5 leading-relaxed">
                 Log in with your college credentials to track attendance, explore placement matches, and get real-time AI mentoring.
               </p>
             </div>
@@ -195,22 +195,22 @@ export const Login: React.FC = () => {
               { icon: Award, title: 'Placement Match Engine', desc: 'Custom role matching, ATS resume scoring, and mock tests' },
               { icon: BookOpen, title: 'AI Mentor Copilot', desc: 'Instant personalized guidance for exams and coding prep' },
             ].map((item, idx) => (
-              <div key={idx} className="flex items-start gap-3 bg-white/5 backdrop-blur-sm p-3 rounded-xl border border-white/10">
-                <div className="w-8 h-8 rounded-lg bg-emerald-400/20 flex items-center justify-center flex-shrink-0 text-emerald-300 mt-0.5">
+              <div key={idx} className="flex items-start gap-3 bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/10">
+                <div className="w-8 h-8 rounded-lg bg-indigo-400/20 flex items-center justify-center flex-shrink-0 text-indigo-200 mt-0.5">
                   <item.icon size={16} />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-white">{item.title}</p>
-                  <p className="text-[11px] text-gray-300 leading-tight mt-0.5">{item.desc}</p>
+                  <p className="text-xs font-bold text-white">{item.title}</p>
+                  <p className="text-[11px] text-slate-200/80 leading-tight mt-0.5">{item.desc}</p>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Footer note */}
-          <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-gray-300">
+          <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-300">
             <span>Academic Year 2025–2026</span>
-            <span className="font-semibold text-emerald-300">v2.4 Live</span>
+            <span className="font-bold text-indigo-200">v2.4 Live</span>
           </div>
         </div>
 
@@ -218,29 +218,29 @@ export const Login: React.FC = () => {
         <div className="lg:col-span-7 p-6 sm:p-10 flex flex-col justify-between bg-white">
           <div>
             {/* Header Tabs */}
-            <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
               <div>
-                <h3 className="text-2xl font-bold text-charcoal">
+                <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">
                   {mode === 'login' ? 'Welcome Back' : 'Create Student Account'}
                 </h3>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-slate-500 mt-1 font-medium">
                   {mode === 'login'
                     ? 'Enter your credentials to access your student dashboard'
                     : 'Register with your institutional details to get started'}
                 </p>
               </div>
 
-              <div className="flex bg-gray-100 p-1 rounded-xl">
+              <div className="flex bg-slate-100 p-1 rounded-xl">
                 <button
                   type="button"
                   onClick={() => {
                     setMode('login');
                     setError(null);
                   }}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                     mode === 'login'
-                      ? 'bg-white text-brand-600 shadow-sm'
-                      : 'text-gray-500 hover:text-charcoal'
+                      ? 'bg-white text-indigo-600 shadow-sm'
+                      : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   Sign In
@@ -251,10 +251,10 @@ export const Login: React.FC = () => {
                     setMode('register');
                     setError(null);
                   }}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                     mode === 'register'
-                      ? 'bg-white text-brand-600 shadow-sm'
-                      : 'text-gray-500 hover:text-charcoal'
+                      ? 'bg-white text-indigo-600 shadow-sm'
+                      : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
                   Register
@@ -266,11 +266,11 @@ export const Login: React.FC = () => {
             {mode === 'login' && (
               <div className="mb-6 bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                 <div className="flex items-center justify-between mb-2.5">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                    <Sparkles size={13} className="text-brand-500" />
+                  <span className="text-xs font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                    <Sparkles size={13} className="text-indigo-600" />
                     Quick 1-Click Demo Profiles
                   </span>
-                  <span className="text-[11px] text-gray-400">Click to switch user</span>
+                  <span className="text-[11px] text-slate-400 font-medium">Click to switch user</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   {DEMO_ACCOUNTS.map((demo) => (
@@ -279,7 +279,7 @@ export const Login: React.FC = () => {
                       type="button"
                       onClick={() => handleQuickLogin(demo)}
                       disabled={loading}
-                      className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-sm transition-all text-left group"
+                      className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-slate-200 hover:border-indigo-500 hover:shadow-sm transition-all text-left group"
                     >
                       <div
                         className={`w-7 h-7 ${demo.color} rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}
@@ -287,10 +287,10 @@ export const Login: React.FC = () => {
                         {demo.avatar}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-semibold text-charcoal truncate group-hover:text-brand-600">
+                        <p className="text-xs font-bold text-slate-900 truncate group-hover:text-indigo-600">
                           {demo.name}
                         </p>
-                        <p className="text-[10px] text-gray-400 truncate">{demo.dept}</p>
+                        <p className="text-[10px] text-slate-400 truncate font-medium">{demo.dept}</p>
                       </div>
                     </button>
                   ))}
@@ -303,9 +303,9 @@ export const Login: React.FC = () => {
               <motion.div
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-4 p-3.5 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2.5 text-xs text-red-700"
+                className="mb-4 p-3.5 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-2.5 text-xs text-rose-700 font-medium"
               >
-                <AlertCircle size={16} className="text-red-500 flex-shrink-0 mt-0.5" />
+                <AlertCircle size={16} className="text-rose-500 flex-shrink-0 mt-0.5" />
                 <span>{error}</span>
               </motion.div>
             )}
@@ -314,7 +314,7 @@ export const Login: React.FC = () => {
               <motion.div
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-4 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-start gap-2.5 text-xs text-emerald-700"
+                className="mb-4 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-start gap-2.5 text-xs text-emerald-700 font-medium"
               >
                 <CheckCircle2 size={16} className="text-emerald-500 flex-shrink-0 mt-0.5" />
                 <span>{successMsg}</span>
@@ -326,31 +326,31 @@ export const Login: React.FC = () => {
               {mode === 'register' && (
                 <>
                   <div>
-                    <label className="block text-xs font-semibold text-charcoal mb-1">
-                      Full Name <span className="text-red-500">*</span>
+                    <label className="block text-xs font-bold text-slate-900 mb-1">
+                      Full Name <span className="text-rose-500">*</span>
                     </label>
                     <div className="relative">
-                      <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                       <input
                         type="text"
                         required
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="e.g. John Doe"
-                        className="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all"
+                        className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-semibold text-charcoal mb-1">Department</label>
+                      <label className="block text-xs font-bold text-slate-900 mb-1">Department</label>
                       <div className="relative">
-                        <GraduationCap size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <GraduationCap size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                         <select
                           value={department}
                           onChange={(e) => setDepartment(e.target.value)}
-                          className="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all text-charcoal"
+                          className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                         >
                           {DEPARTMENTS.map((dept) => (
                             <option key={dept} value={dept}>
@@ -362,15 +362,15 @@ export const Login: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-charcoal mb-1">Roll / Register No</label>
+                      <label className="block text-xs font-bold text-slate-900 mb-1">Roll / Register No</label>
                       <div className="relative">
-                        <Hash size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <Hash size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                         <input
                           type="text"
                           value={rollNumber}
                           onChange={(e) => setRollNumber(e.target.value)}
                           placeholder="e.g. 21CS102"
-                          className="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all"
+                          className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                         />
                       </div>
                     </div>
@@ -379,33 +379,33 @@ export const Login: React.FC = () => {
               )}
 
               <div>
-                <label className="block text-xs font-semibold text-charcoal mb-1">
-                  College Email Address <span className="text-red-500">*</span>
+                <label className="block text-xs font-bold text-slate-900 mb-1">
+                  College Email Address <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
-                  <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="student@college.edu"
-                    className="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                   />
                 </div>
               </div>
 
               {mode === 'register' && (
                 <div>
-                  <label className="block text-xs font-semibold text-charcoal mb-1">Phone Number</label>
+                  <label className="block text-xs font-bold text-slate-900 mb-1">Phone Number</label>
                   <div className="relative">
-                    <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="+91 98765 43210"
-                      className="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all"
+                      className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                     />
                   </div>
                 </div>
@@ -413,29 +413,29 @@ export const Login: React.FC = () => {
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-semibold text-charcoal">
-                    Password <span className="text-red-500">*</span>
+                  <label className="block text-xs font-bold text-slate-900">
+                    Password <span className="text-rose-500">*</span>
                   </label>
                   {mode === 'login' && (
-                    <span className="text-[11px] text-brand-600 font-medium hover:underline cursor-pointer">
+                    <span className="text-[11px] text-indigo-600 font-semibold hover:underline cursor-pointer">
                       Forgot Password?
                     </span>
                   )}
                 </div>
                 <div className="relative">
-                  <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your secure password"
-                    className="w-full pl-10 pr-10 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all"
+                    className="w-full pl-10 pr-10 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -444,22 +444,22 @@ export const Login: React.FC = () => {
 
               {mode === 'login' && (
                 <div className="flex items-center justify-between text-xs pt-1">
-                  <label className="flex items-center gap-2 cursor-pointer text-gray-600">
+                  <label className="flex items-center gap-2 cursor-pointer text-slate-600 font-medium">
                     <input
                       type="checkbox"
                       defaultChecked
-                      className="rounded border-gray-300 text-brand-500 focus:ring-brand-500 w-3.5 h-3.5"
+                      className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5"
                     />
                     Keep me logged in
                   </label>
-                  <span className="text-gray-400">Default pwd: <code className="text-brand-600 font-mono">password123</code></span>
+                  <span className="text-slate-400">Default pwd: <code className="text-indigo-600 font-mono font-bold">password123</code></span>
                 </div>
               )}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 px-4 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl shadow-lg shadow-brand-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed group mt-2"
+                className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed group mt-2"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -473,7 +473,7 @@ export const Login: React.FC = () => {
             </form>
           </div>
 
-          <div className="pt-6 mt-6 border-t border-gray-100 text-center text-xs text-gray-400">
+          <div className="pt-6 mt-6 border-t border-slate-100 text-center text-xs text-slate-400">
             {mode === 'login' ? (
               <p>
                 Don't have an account yet?{' '}
@@ -483,7 +483,7 @@ export const Login: React.FC = () => {
                     setMode('register');
                     setError(null);
                   }}
-                  className="font-semibold text-brand-600 hover:underline"
+                  className="font-bold text-indigo-600 hover:underline"
                 >
                   Create one now
                 </button>
@@ -497,7 +497,7 @@ export const Login: React.FC = () => {
                     setMode('login');
                     setError(null);
                   }}
-                  className="font-semibold text-brand-600 hover:underline"
+                  className="font-bold text-indigo-600 hover:underline"
                 >
                   Sign in here
                 </button>

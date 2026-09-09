@@ -81,7 +81,7 @@ export const MainLayout: React.FC = () => {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setAiDrawerOpen(true)}
-        className="fixed bottom-6 right-6 flex items-center gap-2 bg-brand-500 text-white px-4 py-3 rounded-2xl shadow-lg hover:bg-brand-600 transition-colors z-30 font-medium text-sm"
+        className="fixed bottom-6 right-6 flex items-center gap-2 bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 text-white px-4 py-3 rounded-2xl shadow-xl shadow-indigo-500/35 hover:shadow-indigo-500/50 transition-all z-30 font-semibold text-sm border border-indigo-400/30"
         aria-label="Open AI Mentor"
       >
         <Sparkles size={17} />

@@ -24,6 +24,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   trendPositive = true,
   children,
   className,
+  accentColor,
   onClick,
 }) => {
   return (
@@ -38,25 +39,34 @@ export const StatCard: React.FC<StatCardProps> = ({
     >
       <div className="flex items-start justify-between mb-3">
         <div>
-          <p className="text-sm text-gray-500 font-medium">{title}</p>
-          <p className="text-2xl font-bold text-charcoal mt-1">{value}</p>
+          <p className="text-sm text-slate-500 font-medium">{title}</p>
+          <p className="text-2xl font-extrabold text-slate-900 mt-1 tracking-tight">{value}</p>
         </div>
         {icon && (
-          <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-500 flex-shrink-0">
+          <div
+            className={clsx(
+              'w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm transition-transform duration-200',
+              accentColor || 'bg-indigo-50 text-indigo-600 border border-indigo-100/80'
+            )}
+          >
             {icon}
           </div>
         )}
       </div>
 
       {subtitle && (
-        <p className="text-sm text-gray-600 mb-3">{subtitle}</p>
+        <p className="text-sm text-slate-600 mb-3 font-medium">{subtitle}</p>
       )}
 
       {trend && (
-        <div className={clsx(
-          'inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full',
-          trendPositive ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600',
-        )}>
+        <div
+          className={clsx(
+            'inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full border',
+            trendPositive
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80'
+              : 'bg-rose-50 text-rose-700 border-rose-200/80'
+          )}
+        >
           {trendPositive ? '↑' : '↓'} {trend}
         </div>
       )}

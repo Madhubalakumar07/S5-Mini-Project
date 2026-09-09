@@ -9,13 +9,13 @@ interface BadgeProps {
 }
 
 const variantClasses = {
-  success: 'bg-emerald-50 text-emerald-700 border border-emerald-100',
-  warning: 'bg-amber-50 text-amber-700 border border-amber-100',
-  danger: 'bg-red-50 text-red-700 border border-red-100',
-  info: 'bg-blue-50 text-blue-700 border border-blue-100',
-  brand: 'bg-brand-50 text-brand-700 border border-brand-100',
-  neutral: 'bg-gray-100 text-gray-600 border border-gray-200',
-  sage: 'bg-yellow-50 text-yellow-700 border border-yellow-100',
+  success: 'bg-emerald-50 text-emerald-700 border border-emerald-200/80',
+  warning: 'bg-amber-50 text-amber-700 border border-amber-200/80',
+  danger: 'bg-rose-50 text-rose-700 border border-rose-200/80',
+  info: 'bg-sky-50 text-sky-700 border border-sky-200/80',
+  brand: 'bg-indigo-50 text-indigo-700 border border-indigo-200/80',
+  neutral: 'bg-slate-100 text-slate-700 border border-slate-200',
+  sage: 'bg-purple-50 text-purple-700 border border-purple-200/80',
 };
 
 export const Badge: React.FC<BadgeProps> = ({
