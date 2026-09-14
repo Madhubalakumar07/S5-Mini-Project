@@ -1,12 +1,12 @@
-// Frontend API client for Backend Authentication
+// Frontend auth service — communicates with backend authentication API.
+// Falls back to offline demo mode ONLY in development when backend is unavailable.
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import { apiClient } from './apiClient';
 
 export interface RegisterPayload {
   name: string;
   email: string;
   password: string;
-  role?: string;
   department?: string;
   rollNumber?: string;
   batch?: string;
@@ -14,12 +14,13 @@ export interface RegisterPayload {
   cgpa?: number;
   designation?: string;
   staffId?: string;
+  role?: string; // Ignored by server; always STUDENT for self-registration
 }
 
 export interface LoginPayload {
   email: string;
   password: string;
-  role?: string;
+  role?: string; // Informational only; server enforces role from DB
 }
 
 export interface AuthUser {
@@ -29,11 +30,11 @@ export interface AuthUser {
   role: string;
   department?: string;
   rollNumber?: string;
+  staffId?: string;
   batch?: string;
   phone?: string;
   cgpa?: number;
   designation?: string;
-  staffId?: string;
 }
 
 export interface AuthResponse {
@@ -42,222 +43,209 @@ export interface AuthResponse {
   user: AuthUser;
 }
 
-// Built-in mock users for immediate fallback
-const FALLBACK_USERS: Record<string, AuthUser> = {
-  'arun.kumar@college.edu': {
-    id: 'user_1',
-    name: 'Arun Kumar',
-    email: 'arun.kumar@college.edu',
+// ── Development fallback accounts (only used when backend is unreachable) ──
+// Uses @bitsathy.ac.in domain as required by org policy.
+const FALLBACK_USERS: Record<string, { user: AuthUser; role: 'student' | 'staff' }> = {
+  'arun.kumar@bitsathy.ac.in': {
     role: 'student',
-    department: 'Computer Science',
-    rollNumber: '21CS001',
-    batch: '2026',
-    phone: '+91 98765 43210',
-    cgpa: 8.4,
+    user: {
+      id: 'student_1',
+      name: 'Arun Kumar',
+      email: 'arun.kumar@bitsathy.ac.in',
+      role: 'STUDENT',
+      department: 'Computer Science',
+      rollNumber: '21CS001',
+      batch: '2026',
+      phone: '+91 98765 43210',
+      cgpa: 8.4,
+    },
   },
-  'priya.sharma@college.edu': {
-    id: 'user_2',
-    name: 'Priya Sharma',
-    email: 'priya.sharma@college.edu',
+  'priya.sharma@bitsathy.ac.in': {
     role: 'student',
-    department: 'Artificial Intelligence & Data Science',
-    rollNumber: '21AD045',
-    batch: '2026',
-    phone: '+91 98123 45678',
-    cgpa: 9.1,
+    user: {
+      id: 'student_2',
+      name: 'Priya Sharma',
+      email: 'priya.sharma@bitsathy.ac.in',
+      role: 'STUDENT',
+      department: 'Artificial Intelligence & Data Science',
+      rollNumber: '21AD045',
+      batch: '2026',
+      phone: '+91 98123 45678',
+      cgpa: 9.1,
+    },
   },
-  'rahul.verma@college.edu': {
-    id: 'user_3',
-    name: 'Rahul Verma',
-    email: 'rahul.verma@college.edu',
+  'rahul.verma@bitsathy.ac.in': {
     role: 'student',
-    department: 'Electronics & Communication',
-    rollNumber: '20EC089',
-    batch: '2025',
-    phone: '+91 98456 78901',
-    cgpa: 8.2,
+    user: {
+      id: 'student_3',
+      name: 'Rahul Verma',
+      email: 'rahul.verma@bitsathy.ac.in',
+      role: 'STUDENT',
+      department: 'Electronics & Communication',
+      rollNumber: '20EC089',
+      batch: '2025',
+      phone: '+91 98456 78901',
+      cgpa: 8.2,
+    },
   },
-  'priya.faculty@college.edu': {
-    id: 'staff_1',
-    name: 'Dr. Priya Sharma',
-    email: 'priya.faculty@college.edu',
+  'priya.faculty@bitsathy.ac.in': {
     role: 'staff',
-    department: 'Computer Science & Engineering',
-    rollNumber: 'STF-CS-042',
-    staffId: 'STF-CS-042',
-    designation: 'Associate Professor & Class Advisor',
-    batch: 'Faculty',
-    phone: '+91 94432 18765',
+    user: {
+      id: 'staff_1',
+      name: 'Dr. Priya Sharma',
+      email: 'priya.faculty@bitsathy.ac.in',
+      role: 'STAFF',
+      department: 'Computer Science & Engineering',
+      staffId: 'STF-CS-042',
+      designation: 'Associate Professor & Class Advisor',
+      batch: 'Faculty',
+      phone: '+91 94432 18765',
+    },
   },
-  'rajesh.faculty@college.edu': {
-    id: 'staff_2',
-    name: 'Prof. Rajesh Kumar',
-    email: 'rajesh.faculty@college.edu',
+  'rajesh.faculty@bitsathy.ac.in': {
     role: 'staff',
-    department: 'Artificial Intelligence & Data Science',
-    rollNumber: 'STF-AD-018',
-    staffId: 'STF-AD-018',
-    designation: 'Professor & HOD',
-    batch: 'Faculty',
-    phone: '+91 94432 18766',
+    user: {
+      id: 'staff_2',
+      name: 'Prof. Rajesh Kumar',
+      email: 'rajesh.faculty@bitsathy.ac.in',
+      role: 'STAFF',
+      department: 'Artificial Intelligence & Data Science',
+      staffId: 'STF-AD-018',
+      designation: 'Professor & HOD',
+      batch: 'Faculty',
+      phone: '+91 94432 18766',
+    },
   },
 };
 
+const ORG_DOMAIN = 'bitsathy.ac.in';
+
+const validateOrgEmail = (email: string): boolean => {
+  const normalized = email.trim().toLowerCase();
+  return normalized.endsWith(`@${ORG_DOMAIN}`);
+};
+
+const makeMockToken = (userId: string) => `dev_mock_token_${userId}_${Date.now()}`;
+
 export const authService = {
-  // Register a new user
   async register(data: RegisterPayload): Promise<AuthResponse> {
+    // Client-side org domain check before hitting backend
+    if (!validateOrgEmail(data.email)) {
+      throw new Error(`Only official @${ORG_DOMAIN} email addresses are permitted.`);
+    }
+
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.message || 'Registration failed');
-      }
-
-      if (result.token) {
-        localStorage.setItem('auth_token', result.token);
-        localStorage.setItem('auth_user', JSON.stringify(result.user));
-      }
-
-      return result;
-    } catch (err: any) {
-      // Offline fallback mock registration
-      console.warn('Backend unavailable, using client-side registration mock:', err);
-      const mockUser: AuthUser = {
-        id: 'user_' + Date.now(),
+      const result = await apiClient.post('/auth/register', {
         name: data.name,
-        email: data.email.toLowerCase(),
-        role: data.role || (data.email.includes('faculty') ? 'staff' : 'student'),
-        department: data.department || 'Computer Science',
-        rollNumber: data.rollNumber || (data.role === 'staff' ? 'STF-CS-100' : '21CS100'),
-        batch: data.batch || (data.role === 'staff' ? 'Faculty' : '2026'),
-        phone: data.phone || '+91 98765 00000',
-        cgpa: data.cgpa || (data.role === 'staff' ? undefined : 8.0),
-        designation: data.designation || (data.role === 'staff' ? 'Assistant Professor' : undefined),
-        staffId: data.staffId || (data.role === 'staff' ? 'STF-CS-100' : undefined),
-      };
-      const mockToken = 'mock_jwt_token_' + Date.now();
-      localStorage.setItem('auth_token', mockToken);
-      localStorage.setItem('auth_user', JSON.stringify(mockUser));
-      return {
-        message: 'Registration successful (offline mode)',
-        token: mockToken,
-        user: mockUser,
-      };
-    }
-  },
-
-  // Login user
-  async login(data: LoginPayload): Promise<AuthResponse> {
-    try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+        email: data.email.trim().toLowerCase(),
+        password: data.password,
+        department: data.department,
+        rollNumber: data.rollNumber,
+        batch: data.batch,
+        phone: data.phone,
+        cgpa: data.cgpa,
       });
 
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.message || 'Login failed');
+      if (result.data?.token) {
+        localStorage.setItem('auth_token', result.data.token);
+        localStorage.setItem('auth_user', JSON.stringify(result.data.user));
       }
 
-      if (result.token) {
-        localStorage.setItem('auth_token', result.token);
-        localStorage.setItem('auth_user', JSON.stringify(result.user));
-      }
-
-      return result;
-    } catch (err: any) {
-      // Offline fallback demo users
-      const emailLower = data.email.trim().toLowerCase();
-      const matched = FALLBACK_USERS[emailLower];
-      if (matched) {
-        const mockToken = 'mock_jwt_token_' + matched.id;
-        localStorage.setItem('auth_token', mockToken);
-        localStorage.setItem('auth_user', JSON.stringify(matched));
-        return {
-          message: 'Login successful (offline fallback)',
-          token: mockToken,
-          user: matched,
-        };
-      }
-
-      // If user typed custom email/pwd
-      const isStaffEmail = emailLower.includes('faculty') || emailLower.includes('staff') || data.role === 'staff';
-      const customUser: AuthUser = {
-        id: 'user_' + Date.now(),
-        name: isStaffEmail ? 'Dr. Faculty Member' : 'Student User',
-        email: emailLower,
-        role: isStaffEmail ? 'staff' : 'student',
-        department: 'Computer Science',
-        rollNumber: isStaffEmail ? 'STF-CS-099' : '21CS099',
-        staffId: isStaffEmail ? 'STF-CS-099' : undefined,
-        designation: isStaffEmail ? 'Associate Professor' : undefined,
-        batch: isStaffEmail ? 'Faculty' : '2026',
-        cgpa: isStaffEmail ? undefined : 8.2,
-      };
-      const mockToken = 'mock_jwt_token_custom_' + Date.now();
-      localStorage.setItem('auth_token', mockToken);
-      localStorage.setItem('auth_user', JSON.stringify(customUser));
       return {
-        message: 'Login successful',
-        token: mockToken,
-        user: customUser,
+        message: result.message || 'Registration successful',
+        token: result.data?.token,
+        user: result.data?.user,
       };
+    } catch (err: any) {
+      throw new Error(err.message || 'Registration failed');
     }
   },
 
-  // Fetch current authenticated user
+  async login(data: LoginPayload): Promise<AuthResponse> {
+    const emailNorm = data.email.trim().toLowerCase();
+
+    if (!validateOrgEmail(emailNorm)) {
+      throw new Error(`Only official @${ORG_DOMAIN} email addresses are permitted.`);
+    }
+
+    try {
+      const result = await apiClient.post('/auth/login', {
+        email: emailNorm,
+        password: data.password,
+      }, { skipAuth: true });
+
+      const authData = result.data || result;
+      const token = authData.token;
+      const user = authData.user;
+
+      if (token) {
+        localStorage.setItem('auth_token', token);
+        localStorage.setItem('auth_user', JSON.stringify(user));
+      }
+
+      return {
+        message: result.message || 'Login successful',
+        token,
+        user,
+      };
+    } catch (networkErr: any) {
+      // Offline fallback for development — ONLY if backend unreachable
+      if (import.meta.env.DEV) {
+        const matched = FALLBACK_USERS[emailNorm];
+        if (matched) {
+          const mockToken = makeMockToken(matched.user.id);
+          localStorage.setItem('auth_token', mockToken);
+          localStorage.setItem('auth_user', JSON.stringify(matched.user));
+          return {
+            message: 'Login successful (offline dev mode)',
+            token: mockToken,
+            user: matched.user,
+          };
+        }
+      }
+      throw new Error(networkErr.message || 'Login failed');
+    }
+  },
+
   async getMe(): Promise<{ user: AuthUser }> {
     const token = localStorage.getItem('auth_token');
-    if (!token) {
-      throw new Error('No authentication token found');
-    }
+    if (!token) throw new Error('No authentication token found');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.message || 'Failed to fetch user session');
+      const result = await apiClient.get('/auth/me');
+      const user = result.data?.user || result.user;
+      if (user) {
+        localStorage.setItem('auth_user', JSON.stringify(user));
       }
-
-      if (result.user) {
-        localStorage.setItem('auth_user', JSON.stringify(result.user));
+      return { user };
+    } catch (err: any) {
+      // If token is invalid/expired, clear storage
+      if (err.message?.includes('expired') || err.message?.includes('Invalid')) {
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_user');
       }
-
-      return result;
-    } catch {
+      // Fall back to cached user for offline dev
       const cached = this.getStoredUser();
       if (cached) return { user: cached };
-      throw new Error('Could not fetch user profile');
+      throw new Error('Session validation failed. Please log in again.');
     }
   },
 
-  // Logout
-  logout() {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_user');
+  async logout(): Promise<void> {
+    try {
+      await apiClient.post('/auth/logout');
+    } catch {
+      // Ignore network errors on logout; clear local state regardless
+    } finally {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+    }
   },
 
-  // Check token existence
-  getToken() {
+  getToken(): string | null {
     return localStorage.getItem('auth_token');
   },
 
-  // Get locally stored user
   getStoredUser(): AuthUser | null {
     try {
       const stored = localStorage.getItem('auth_user');

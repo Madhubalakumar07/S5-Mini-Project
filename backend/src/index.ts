@@ -1,30 +1,71 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { config } from './config/index.js';
 import authRoutes from './routes/authRoutes.js';
+import studentRoutes from './routes/studentRoutes.js';
+import staffRoutes from './routes/staffRoutes.js';
+import { globalErrorHandler } from './middleware/errorHandler.js';
+import { sendSuccess, sendError } from './utils/responseUtils.js';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// ── Security & Parsing Middleware ───────────────────────────────────────
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      const allowed = [config.frontendUrl, 'http://localhost:5173', 'http://localhost:3000'];
+      // Allow requests with no origin (server-to-server, curl, etc.) in dev
+      if (!origin || allowed.includes(origin) || config.nodeEnv === 'development') {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS blocked for origin: ${origin}`));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
-// Routes
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+
+// ── Routes ──────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
+app.use('/api/student', studentRoutes);
+app.use('/api/staff', staffRoutes);
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({
+// Health check
+app.get('/api/health', (_req, res) => {
+  sendSuccess(res, {
     status: 'online',
     timestamp: new Date().toISOString(),
-    service: 'CampusAI Auth Backend API'
-  });
+    service: 'CampusAI Backend API',
+    environment: config.nodeEnv,
+    orgDomain: config.orgEmailDomain,
+  }, 'Service is healthy');
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`🔐 Auth API available at http://localhost:${PORT}/api/auth`);
+// 404 fallback
+app.use((_req, res) => {
+  sendError(res, 'Route not found.', 404);
 });
+
+// ── Global Error Handler ────────────────────────────────────────────────
+app.use(globalErrorHandler);
+
+// ── Start Server ────────────────────────────────────────────────────────
+app.listen(config.port, () => {
+  console.log(`\n🚀 CampusAI Backend running at http://localhost:${config.port}`);
+  console.log(`🔐 Auth API:    http://localhost:${config.port}/api/auth`);
+  console.log(`👨‍🎓 Student API: http://localhost:${config.port}/api/student`);
+  console.log(`👩‍🏫 Staff API:   http://localhost:${config.port}/api/staff`);
+  console.log(`🏫 Org domain:  @${config.orgEmailDomain}`);
+  console.log(`🌍 CORS origin: ${config.frontendUrl}`);
+  console.log(`🔧 Mode:        ${config.nodeEnv}\n`);
+});
+
+export default app;

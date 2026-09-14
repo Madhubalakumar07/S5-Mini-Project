@@ -29,7 +29,7 @@ const defaultStudent: Student = {
   rollNumber: '21CS001',
   cgpa: 8.4,
   semesterGpa: 8.7,
-  email: 'arun.kumar@college.edu',
+  email: 'arun.kumar@bitsathy.ac.in',
   phone: '+91 98765 43210',
   avatarInitials: 'AK',
   onlineStatus: 'online',
@@ -44,8 +44,17 @@ const getInitials = (name: string): string => {
   return parts[0].slice(0, 2).toUpperCase();
 };
 
+/**
+ * Normalizes role from server (STUDENT/STAFF) to frontend lowercase convention (student/staff).
+ */
+const normalizeRole = (role?: string): 'student' | 'staff' => {
+  if (!role) return 'student';
+  const r = role.toLowerCase();
+  return r === 'staff' ? 'staff' : 'student';
+};
+
 const buildStudentFromUser = (user: AuthUser | null): Student => {
-  if (!user || user.role === 'staff') return defaultStudent;
+  if (!user || normalizeRole(user.role) === 'staff') return defaultStudent;
   const name = user.name || 'Student';
   const firstName = name.split(' ')[0];
   const initials = getInitials(name);
@@ -67,7 +76,7 @@ const buildStudentFromUser = (user: AuthUser | null): Student => {
 };
 
 const buildStaffFromUser = (user: AuthUser | null): StaffProfile => {
-  if (!user || user.role !== 'staff') return defaultStaffProfile;
+  if (!user || normalizeRole(user.role) !== 'staff') return defaultStaffProfile;
   return {
     id: user.id || 'STF_001',
     name: user.name || 'Dr. Faculty Member',
@@ -93,14 +102,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [token, setToken] = useState<string | null>(() => authService.getToken());
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Computed student and staff objects synced with user
+  // Derived state
   const [student, setStudent] = useState<Student>(() => buildStudentFromUser(authService.getStoredUser()));
   const [staffProfile, setStaffProfile] = useState<StaffProfile>(() => buildStaffFromUser(authService.getStoredUser()));
 
-  const role: 'student' | 'staff' = user?.role === 'staff' ? 'staff' : 'student';
+  const role: 'student' | 'staff' = normalizeRole(user?.role);
   const isStaff = role === 'staff';
   const isStudent = role === 'student';
 
+  // Restore session on app load by calling GET /api/auth/me
   useEffect(() => {
     const initAuth = async () => {
       const storedToken = authService.getToken();
@@ -116,13 +126,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setStudent(buildStudentFromUser(response.user));
           setStaffProfile(buildStaffFromUser(response.user));
         }
-      } catch (err) {
-        console.warn('Backend validation failed, using cached session:', err);
+      } catch {
+        // Backend unreachable or token invalid — fall back to cached user
         const cachedUser = authService.getStoredUser();
         if (cachedUser) {
           setUser(cachedUser);
           setStudent(buildStudentFromUser(cachedUser));
           setStaffProfile(buildStaffFromUser(cachedUser));
+        } else {
+          // Token exists but no cached user and backend failed — clear state
+          setUser(null);
+          setToken(null);
         }
       } finally {
         setIsLoading(false);
@@ -158,8 +172,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const logout = () => {
-    authService.logout();
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch {
+      // Ignore logout errors
+    }
     setUser(null);
     setToken(null);
     setStudent(defaultStudent);

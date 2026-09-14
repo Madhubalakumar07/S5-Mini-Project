@@ -1,34 +1,45 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import { verifyAccessToken } from '../utils/tokenUtils.js';
+import { sendError } from '../utils/responseUtils.js';
+import { JwtPayload } from '../types/index.js';
 
-export interface AuthRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    name: string;
-    role?: string;
-  };
+export interface AuthenticatedRequest extends Request {
+  user?: JwtPayload;
 }
 
-export const authenticateToken = (
-  req: AuthRequest,
+/**
+ * Middleware that validates the Bearer JWT token in Authorization header.
+ * Attaches decoded user claims to req.user.
+ */
+export const authenticateUser = (
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
-) => {
+): Response | void => {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({ message: 'Access token missing or invalid' });
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return sendError(res, 'Authentication token missing or invalid format. Please log in.', 401);
   }
 
-  const secret = process.env.JWT_SECRET || 'fallback_secret';
+  const token = authHeader.split(' ')[1];
 
-  jwt.verify(token, secret, (err: any, decoded: any) => {
-    if (err) {
-      return res.status(403).json({ message: 'Token expired or invalid' });
-    }
+  if (!token) {
+    return sendError(res, 'Access token is required.', 401);
+  }
+
+  try {
+    const decoded = verifyAccessToken(token);
     req.user = decoded;
-    next();
-  });
+    return next();
+  } catch (err: any) {
+    if (err.name === 'TokenExpiredError') {
+      return sendError(res, 'Session expired. Please log in again.', 401);
+    }
+    return sendError(res, 'Invalid authentication token.', 401);
+  }
 };
+
+// Backwards compatibility alias
+export const authenticateToken = authenticateUser;
+export type AuthRequest = AuthenticatedRequest;
