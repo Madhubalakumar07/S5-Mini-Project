@@ -6,7 +6,7 @@ import {
 } from 'recharts';
 import {
   Briefcase, Code2, FileText, Star, ChevronRight, CheckCircle,
-  Circle, ExternalLink, Calendar, Clock, Zap, Trophy,
+  Circle, ExternalLink, Calendar, Clock, Zap, Trophy, Sparkles,
 } from 'lucide-react';
 import { ProgressRing } from '../components/ui/ProgressRing';
 import { ProgressBar } from '../components/ui/ProgressBar';
@@ -14,6 +14,7 @@ import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { ChartCard } from '../components/ui/ChartCard';
 import { StatCard } from '../components/ui/StatCard';
+import { AIMentorDrawer } from '../components/shared/AIMentorDrawer';
 import {
   placementScore, placementBreakdown, careerRoadmap,
   recommendedCompanies, resumeChecklist, mockInterview,
@@ -33,6 +34,15 @@ const radarData = placementBreakdown.map((b) => ({
 
 export const Placement: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'all' | 'recommended' | 'applied'>('all');
+  const [aiDrawerOpen, setAiDrawerOpen] = useState(false);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string>('zoho');
+  const [activeAiTab, setActiveAiTab] = useState<'chat' | 'pdf' | 'company'>('company');
+
+  const openCompanyAi = (companyName: string) => {
+    setSelectedCompanyId(companyName.toLowerCase());
+    setActiveAiTab('company');
+    setAiDrawerOpen(true);
+  };
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 max-w-7xl mx-auto">
@@ -244,7 +254,13 @@ export const Placement: React.FC = () => {
                 />
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-gray-500">CTC: <span className="font-medium text-charcoal">{company.ctc}</span></span>
-                  <Button variant="secondary" size="sm">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => openCompanyAi(company.name)}
+                    className="flex items-center gap-1 hover:bg-brand-50 hover:text-brand-700"
+                  >
+                    <Sparkles size={12} className="text-brand-600" />
                     Prep Plan <ChevronRight size={12} />
                   </Button>
                 </div>
@@ -289,8 +305,16 @@ export const Placement: React.FC = () => {
                 </div>
               ))}
             </div>
-            <Button variant="primary" size="sm" className="w-full">
-              Improve Resume
+            <Button
+              variant="primary"
+              size="sm"
+              className="w-full"
+              onClick={() => {
+                setActiveAiTab('chat');
+                setAiDrawerOpen(true);
+              }}
+            >
+              Improve Resume with AI
             </Button>
           </div>
 
@@ -318,12 +342,29 @@ export const Placement: React.FC = () => {
                 <span key={t} className="text-xs bg-gray-50 border border-gray-200 px-2 py-0.5 rounded-full text-gray-600">{t}</span>
               ))}
             </div>
-            <Button variant="primary" size="sm" className="w-full">
-              Prepare Now <Zap size={13} />
+            <Button
+              variant="primary"
+              size="sm"
+              className="w-full flex items-center justify-center gap-1.5"
+              onClick={() => {
+                setActiveAiTab('chat');
+                setAiDrawerOpen(true);
+              }}
+            >
+              Prepare with AI Mentor <Zap size={13} />
             </Button>
           </div>
         </div>
       </motion.div>
+
+      {/* AI Mentor Drawer */}
+      <AIMentorDrawer
+        isOpen={aiDrawerOpen}
+        onClose={() => setAiDrawerOpen(false)}
+        initialTab={activeAiTab}
+        initialCompanyId={selectedCompanyId}
+      />
     </motion.div>
   );
 };
+

@@ -9,5 +9,7 @@ export const config = {
   frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
   orgEmailDomain: process.env.ORG_EMAIL_DOMAIN || 'bitsathy.ac.in',
   nodeEnv: process.env.NODE_ENV || 'development',
+  geminiApiKey: process.env.GEMINI_API_KEY || '',
   bcryptSaltRounds: 10,
 };
+

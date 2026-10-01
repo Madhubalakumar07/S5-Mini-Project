@@ -5,6 +5,7 @@ import { config } from './config/index.js';
 import authRoutes from './routes/authRoutes.js';
 import studentRoutes from './routes/studentRoutes.js';
 import staffRoutes from './routes/staffRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
 import { globalErrorHandler } from './middleware/errorHandler.js';
 import { sendSuccess, sendError } from './utils/responseUtils.js';
 
@@ -30,13 +31,14 @@ app.use(
   })
 );
 
-app.use(express.json({ limit: '1mb' }));
-app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // ── Routes ──────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/staff', staffRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {
@@ -63,6 +65,7 @@ app.listen(config.port, () => {
   console.log(`🔐 Auth API:    http://localhost:${config.port}/api/auth`);
   console.log(`👨‍🎓 Student API: http://localhost:${config.port}/api/student`);
   console.log(`👩‍🏫 Staff API:   http://localhost:${config.port}/api/staff`);
+  console.log(`🤖 AI API:      http://localhost:${config.port}/api/ai`);
   console.log(`🏫 Org domain:  @${config.orgEmailDomain}`);
   console.log(`🌍 CORS origin: ${config.frontendUrl}`);
   console.log(`🔧 Mode:        ${config.nodeEnv}\n`);

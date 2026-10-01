@@ -13,11 +13,13 @@ export interface User {
   staffId?: string;
   designation?: string;
   batch?: string;
+  year?: number;
   phone?: string;
   cgpa?: number;
   createdAt: string;
   updatedAt: string;
 }
+
 
 export type SafeUser = Omit<User, 'passwordHash'>;
 

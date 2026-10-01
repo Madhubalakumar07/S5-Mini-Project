@@ -272,3 +272,68 @@ export interface StaffReportSummary {
   description: string;
   summaryMetrics: Record<string, string | number>;
 }
+
+// ─── AI Mentor & Placement Types ─────────────────────────────────────
+export interface RecruitmentStage {
+  roundNumber: number;
+  name: string;
+  type: 'Aptitude' | 'Coding' | 'Technical' | 'Managerial' | 'HR' | 'System Design' | 'Communication';
+  duration: string;
+  elimination: boolean;
+  description: string;
+  keyTopics: string[];
+  tips: string[];
+  sampleQuestions: string[];
+}
+
+export interface CompanyRecruitmentProfile {
+  id: string;
+  name: string;
+  logo: string;
+  color: string;
+  ctc: string;
+  roles: string[];
+  minCgpa: number;
+  allowedArrears: number;
+  eligibleBranches: string[];
+  difficultyLevel: 'Easy' | 'Medium' | 'Medium-Hard' | 'Hard';
+  overview: string;
+  hiringTimeline: string;
+  selectionRatio: string;
+  requiredSkills: string[];
+  coreCSFocus: string[];
+  stages: RecruitmentStage[];
+  previousYearQuestions: {
+    coding: { title: string; difficulty: 'Easy' | 'Medium' | 'Hard'; description: string; topic: string }[];
+    technicalCore: { question: string; subject: string; sampleAnswerHint: string }[];
+    hr: { question: string; intent: string; tips: string }[];
+  };
+  preparationRoadmap: {
+    week1: string;
+    week2: string;
+    week3: string;
+    dayBeforeDrive: string;
+  };
+}
+
+export interface SummarizePdfResult {
+  title: string;
+  wordCount: number;
+  executiveSummary: string;
+  keyConcepts: { title: string; explanation: string; importance: 'High' | 'Medium' }[];
+  formulasAndDefinitions: string[];
+  topExamQuestions: { question: string; answerSummary: string; markWeightage: string }[];
+  quickRevisionPoints: string[];
+  suggestedActionItems: string[];
+}
+
+export interface CompanyAnalysisResult {
+  company: CompanyRecruitmentProfile;
+  isCgpaEligible: boolean;
+  cgpaDifference: number;
+  matchedSkills: string[];
+  missingSkills: string[];
+  estimatedReadiness: number;
+  recommendations: string[];
+}
+

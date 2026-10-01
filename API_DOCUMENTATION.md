@@ -558,3 +558,51 @@ All error responses follow this structure:
 | `FRONTEND_URL` | Allowed CORS origin | `http://localhost:5173` |
 | `ORG_EMAIL_DOMAIN` | Enforced email domain | `bitsathy.ac.in` |
 | `NODE_ENV` | Environment mode | `development` |
+| `GEMINI_API_KEY` | (Optional) Google Gemini API key for live LLM responses | `AIzaSy...` |
+
+---
+
+## AI & Placement Mentor Endpoints
+
+### `POST /api/ai/chat`
+Context-aware AI conversation analyzing student academics, attendance risks, and company recruitment intelligence.
+
+**Auth Required:** Yes (`STUDENT` or `STAFF`)  
+**Request Body:**
+```json
+{
+  "message": "Explain the complete Zoho recruitment process and rounds.",
+  "history": [],
+  "companyId": "zoho",
+  "studyMaterialContext": "Optional PDF summary context"
+}
+```
+
+---
+
+### `POST /api/ai/summarize-pdf`
+Summarizes student lecture notes or PDFs into high-yield exam points, key concepts, formulas, and 16-mark/2-mark questions.
+
+**Auth Required:** Yes  
+**Payload Format:** Supports `multipart/form-data` with `file` (PDF/TXT) OR `application/json` with `{ "text": "...", "documentName": "..." }`.
+
+---
+
+### `POST /api/ai/analyze-company`
+Calculates student eligibility, estimated readiness percentage, and returns round-by-round recruitment procedure for a target company (Zoho, TCS, Infosys, Accenture, Product tier).
+
+**Auth Required:** Yes  
+**Request Body:**
+```json
+{
+  "companyId": "zoho"
+}
+```
+
+---
+
+### `GET /api/ai/companies`
+Retrieves all supported recruitment company intelligence profiles.
+
+**Auth Required:** Yes
+
