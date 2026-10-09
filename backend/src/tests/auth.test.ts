@@ -177,9 +177,10 @@ async function runAuthServiceTests(): Promise<void> {
   });
 
   await test('Self-registration always creates STUDENT role (not STAFF)', async () => {
+    const testEmail = `test.newstudent.${Date.now()}@bitsathy.ac.in`;
     const result = await authService.register({
       name: 'Test Student',
-      email: 'test.newstudent@bitsathy.ac.in',
+      email: testEmail,
       password: 'password123',
       department: 'Computer Science',
     });

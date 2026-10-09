@@ -19,68 +19,11 @@ import { useAuth } from '../context/AuthContext';
 
 const ORG_DOMAIN = 'bitsathy.ac.in';
 
-const STUDENT_DEMO_ACCOUNTS = [
-  {
-    name: 'Arun Kumar',
-    email: 'arun.kumar@bitsathy.ac.in',
-    dept: 'Computer Science',
-    roll: '21CS001',
-    cgpa: 8.4,
-    avatar: 'AK',
-    role: 'student',
-    color: 'bg-emerald-600',
-  },
-  {
-    name: 'Priya Sharma',
-    email: 'priya.sharma@bitsathy.ac.in',
-    dept: 'AI & Data Science',
-    roll: '21AD045',
-    cgpa: 9.1,
-    avatar: 'PS',
-    role: 'student',
-    color: 'bg-blue-600',
-  },
-  {
-    name: 'Rahul Verma',
-    email: 'rahul.verma@bitsathy.ac.in',
-    dept: 'Electronics & Comm',
-    roll: '20EC089',
-    cgpa: 8.2,
-    avatar: 'RV',
-    role: 'student',
-    color: 'bg-purple-600',
-  },
-];
-
-const STAFF_DEMO_ACCOUNTS = [
-  {
-    name: 'Dr. Priya Sharma',
-    email: 'priya.faculty@bitsathy.ac.in',
-    dept: 'CSE · Class Advisor',
-    roll: 'STF-CS-042',
-    designation: 'Associate Professor',
-    avatar: 'PS',
-    role: 'staff',
-    color: 'bg-indigo-600',
-  },
-  {
-    name: 'Prof. Rajesh Kumar',
-    email: 'rajesh.faculty@bitsathy.ac.in',
-    dept: 'AI & DS · HOD',
-    roll: 'STF-AD-018',
-    designation: 'Professor & HOD',
-    avatar: 'RK',
-    role: 'staff',
-    color: 'bg-violet-600',
-  },
-];
-
 export const Login: React.FC = () => {
   const { login, isAuthenticated, role } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [demoTab, setDemoTab] = useState<'student' | 'staff'>('student');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -116,22 +59,6 @@ export const Login: React.FC = () => {
       navigate(userRole === 'staff' ? '/staff/dashboard' : '/dashboard', { replace: true });
     } catch (err: any) {
       setError(err.message || 'Invalid credentials. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleQuickLogin = async (demo: (typeof STUDENT_DEMO_ACCOUNTS)[0] | (typeof STAFF_DEMO_ACCOUNTS)[0]) => {
-    setEmail(demo.email);
-    setPassword('password123');
-    setError(null);
-    setLoading(true);
-    const targetUrl = demo.role === 'staff' ? '/staff/dashboard' : '/dashboard';
-    try {
-      await login({ email: demo.email, password: 'password123' });
-      navigate(targetUrl, { replace: true });
-    } catch (err: any) {
-      setError(err.message || 'Quick login failed. Ensure the backend is running.');
     } finally {
       setLoading(false);
     }
@@ -216,86 +143,6 @@ export const Login: React.FC = () => {
               </p>
             </div>
 
-            {/* Quick Demo Accounts */}
-            <div className="mb-6 bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                  <Sparkles size={13} className="text-indigo-600" />
-                  Quick 1-Click Demo Profiles
-                </span>
-
-                <div className="flex bg-slate-200/80 p-0.5 rounded-lg text-[11px] font-bold">
-                  <button
-                    type="button"
-                    onClick={() => setDemoTab('student')}
-                    className={`px-2.5 py-1 rounded-md transition-all ${
-                      demoTab === 'student'
-                        ? 'bg-white text-indigo-600 shadow-sm'
-                        : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                  >
-                    Students (3)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setDemoTab('staff')}
-                    className={`px-2.5 py-1 rounded-md transition-all ${
-                      demoTab === 'staff'
-                        ? 'bg-white text-indigo-600 shadow-sm'
-                        : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                  >
-                    Staff / Faculty (2)
-                  </button>
-                </div>
-              </div>
-
-              {demoTab === 'student' ? (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  {STUDENT_DEMO_ACCOUNTS.map((demo) => (
-                    <button
-                      key={demo.email}
-                      type="button"
-                      onClick={() => handleQuickLogin(demo)}
-                      disabled={loading}
-                      className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-slate-200 hover:border-indigo-500 hover:shadow-sm transition-all text-left group"
-                    >
-                      <div className={`w-7 h-7 ${demo.color} rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}>
-                        {demo.avatar}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs font-bold text-slate-900 truncate group-hover:text-indigo-600">
-                          {demo.name}
-                        </p>
-                        <p className="text-[10px] text-slate-400 truncate font-medium">{demo.dept}</p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {STAFF_DEMO_ACCOUNTS.map((demo) => (
-                    <button
-                      key={demo.email}
-                      type="button"
-                      onClick={() => handleQuickLogin(demo)}
-                      disabled={loading}
-                      className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-indigo-200/90 hover:border-indigo-500 hover:shadow-sm transition-all text-left group bg-gradient-to-r from-indigo-50/40 to-white"
-                    >
-                      <div className={`w-7 h-7 ${demo.color} rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}>
-                        {demo.avatar}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs font-bold text-slate-900 truncate group-hover:text-indigo-600">
-                          {demo.name}
-                        </p>
-                        <p className="text-[10px] text-indigo-600 truncate font-semibold">{demo.dept}</p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
 
             {/* Error Alert */}
             {error && (
@@ -369,7 +216,6 @@ export const Login: React.FC = () => {
                   />
                   Keep me logged in
                 </label>
-                <span className="text-slate-400">Demo pwd: <code className="text-indigo-600 font-mono font-bold">password123</code></span>
               </div>
 
               <button

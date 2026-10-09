@@ -186,7 +186,7 @@ export const aiService = {
         formData.append('documentName', docTitle);
         if (topicContext) formData.append('topicContext', topicContext);
 
-        const token = localStorage.getItem('auth_token') || 'dev_mock_token_student_1';
+        const token = localStorage.getItem('auth_token');
         const headers: Record<string, string> = {};
         if (token) {
           headers['Authorization'] = `Bearer ${token}`;

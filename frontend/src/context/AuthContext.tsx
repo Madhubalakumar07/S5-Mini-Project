@@ -21,18 +21,18 @@ interface AuthContextType {
 }
 
 const defaultStudent: Student = {
-  id: '21CS001',
-  name: 'Arun Kumar',
-  firstName: 'Arun',
-  department: 'Computer Science',
-  batch: '2026',
-  rollNumber: '21CS001',
-  cgpa: 8.4,
-  semesterGpa: 8.7,
-  email: 'arun.kumar@bitsathy.ac.in',
-  phone: '+91 98765 43210',
-  avatarInitials: 'AK',
-  onlineStatus: 'online',
+  id: '',
+  name: '',
+  firstName: '',
+  department: '',
+  batch: '',
+  rollNumber: '',
+  cgpa: 0,
+  semesterGpa: 0,
+  email: '',
+  phone: '',
+  avatarInitials: '',
+  onlineStatus: 'offline',
 };
 
 const getInitials = (name: string): string => {
@@ -60,16 +60,16 @@ const buildStudentFromUser = (user: AuthUser | null): Student => {
   const initials = getInitials(name);
 
   return {
-    id: user.id || user.rollNumber || 'STU001',
+    id: user.id || user.rollNumber || '',
     name,
     firstName,
-    department: user.department || 'Computer Science',
-    batch: user.batch || '2026',
-    rollNumber: user.rollNumber || '21CS001',
-    cgpa: user.cgpa ?? 8.4,
-    semesterGpa: 8.7,
+    department: user.department || 'General',
+    batch: user.batch || '',
+    rollNumber: user.rollNumber || '',
+    cgpa: user.cgpa ?? 0,
+    semesterGpa: user.cgpa ?? 0,
     email: user.email,
-    phone: user.phone || '+91 98765 43210',
+    phone: user.phone || '',
     avatarInitials: initials,
     onlineStatus: 'online',
   };
@@ -78,19 +78,19 @@ const buildStudentFromUser = (user: AuthUser | null): Student => {
 const buildStaffFromUser = (user: AuthUser | null): StaffProfile => {
   if (!user || normalizeRole(user.role) !== 'staff') return defaultStaffProfile;
   return {
-    id: user.id || 'STF_001',
-    name: user.name || 'Dr. Faculty Member',
-    staffId: user.staffId || user.rollNumber || 'STF-CS-042',
+    id: user.id || '',
+    name: user.name || 'Faculty Member',
+    staffId: user.staffId || user.rollNumber || '',
     email: user.email,
-    department: user.department || 'Computer Science & Engineering',
-    designation: user.designation || 'Associate Professor & Class Advisor',
-    phone: user.phone || '+91 94432 18765',
-    office: 'Academic Block B, Room 304',
+    department: user.department || 'General',
+    designation: user.designation || 'Faculty',
+    phone: user.phone || '',
+    office: 'Faculty Block',
     avatarInitials: getInitials(user.name || 'Faculty Member'),
     subjects: [
-      'Data Structures & Algorithms (CS301)',
-      'Database Management Systems (CS302)',
-      'Artificial Intelligence & ML (CS501)',
+      'Data Structures & Algorithms',
+      'Database Management Systems',
+      'Artificial Intelligence & ML',
     ],
   };
 };
