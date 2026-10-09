@@ -10,7 +10,7 @@ import {
   StudyPlanDay,
   StudentPlacementData,
 } from '../types/index.js';
-import { userRepository } from './mockUserRepository.js';
+import { userRepository } from './userRepository.js';
 
 export class MockStudentRepository implements IStudentRepository {
   private defaultAttendanceTrend: AttendanceTrend[] = [
@@ -142,6 +142,19 @@ export class MockStudentRepository implements IStudentRepository {
   }
 
   async getAttendanceData(studentId: string) {
+    if (studentId === 'student_2') {
+      return {
+        trend: this.defaultAttendanceTrend,
+        subjects: this.defaultSubjects,
+        calendar: this.defaultCalendar,
+        stats: {
+          overallPercentage: 96.5,
+          classesAttended: 194,
+          totalClasses: 201,
+          safeBunksAvailable: 8,
+        },
+      };
+    }
     return {
       trend: this.defaultAttendanceTrend,
       subjects: this.defaultSubjects,
@@ -156,6 +169,29 @@ export class MockStudentRepository implements IStudentRepository {
   }
 
   async getAcademicsData(studentId: string) {
+    if (studentId === 'student_2') {
+      return {
+        subjectScores: this.defaultSubjectScores,
+        performanceTrend: this.defaultPerformanceTrend,
+        weakSubjects: [
+          {
+            subject: 'Database Management Systems',
+            score: 82,
+            status: 'Needs Improvement' as const,
+            recommendation: 'Focus on Normalization and Advanced SQL joins.',
+            topics: ['Normalization', 'SQL Joins'],
+          }
+        ],
+        studyPlan: this.defaultStudyPlan,
+        semesterHistory: [
+          { semester: 'Sem 1', gpa: 8.8 },
+          { semester: 'Sem 2', gpa: 9.1 },
+          { semester: 'Sem 3', gpa: 9.0 },
+          { semester: 'Sem 4', gpa: 9.3 },
+          { semester: 'Sem 5', gpa: 9.1 },
+        ],
+      };
+    }
     return {
       subjectScores: this.defaultSubjectScores,
       performanceTrend: this.defaultPerformanceTrend,

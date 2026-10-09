@@ -19,6 +19,7 @@ import { performanceTrend } from '../data/academicData';
 import { codingPlatforms } from '../data/codingData';
 
 import { useAuth } from '../context/AuthContext';
+import { aiService } from '../services/aiService';
 
 const subjectColors: Record<string, string> = {
   dataStructures: '#6366F1',
@@ -81,6 +82,13 @@ export const Dashboard: React.FC = () => {
     cn: true,
   });
   const [aiDismissed, setAiDismissed] = useState(false);
+  const [aiInsight, setAiInsight] = useState<{ summary: string; recommendedActions: string[] } | null>(null);
+
+  React.useEffect(() => {
+    aiService.getStudentInsights().then((data) => {
+      setAiInsight(data);
+    }).catch(console.error);
+  }, []);
 
   const attendanceDonut = [
     { name: 'Present', value: 92.4 },
@@ -177,8 +185,7 @@ export const Dashboard: React.FC = () => {
       </motion.div>
 
       {/* AI Insight */}
-      {/* AI Insight */}
-      {!aiDismissed && (
+      {!aiDismissed && aiInsight && (
         <motion.div variants={item}>
           <div className="card p-5 border-l-4 border-indigo-600 bg-gradient-to-r from-indigo-50/70 via-white to-white border-t border-r border-b border-slate-200/80">
             <div className="flex items-start gap-4">
@@ -191,17 +198,12 @@ export const Dashboard: React.FC = () => {
                   <Badge variant="brand" size="sm">AI INSIGHT</Badge>
                 </div>
                 <p className="text-sm text-slate-600 mb-3 leading-relaxed">
-                  Your attendance is strong, but <span className="font-bold text-slate-900">Data Structures</span> performance
-                  has dropped <span className="text-rose-600 font-bold">8%</span> over the last two assessments.
+                  {aiInsight.summary}
                 </p>
                 <div className="mb-4">
                   <p className="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">Recommended actions</p>
                   <ul className="space-y-1.5">
-                    {[
-                      'Practice 5 medium-level DSA problems today',
-                      'Review Trees and Graphs chapter',
-                      'Attend the upcoming DSA revision session',
-                    ].map((action, i) => (
+                    {aiInsight.recommendedActions.map((action, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-slate-700 font-medium">
                         <span className="w-4 h-4 bg-indigo-600 text-white rounded-full flex items-center justify-center text-[10px] font-extrabold flex-shrink-0 mt-0.5 shadow-xs">
                           {i + 1}

@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/authMiddleware.js';
 import { studentService } from '../services/studentService.js';
 import { sendSuccess, sendError } from '../utils/responseUtils.js';
-import { userRepository } from '../repositories/mockUserRepository.js';
+import { userRepository } from '../repositories/userRepository.js';
 
 /**
  * All student controllers use req.user.id from the verified JWT —

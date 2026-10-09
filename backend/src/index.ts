@@ -8,6 +8,8 @@ import staffRoutes from './routes/staffRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 import { globalErrorHandler } from './middleware/errorHandler.js';
 import { sendSuccess, sendError } from './utils/responseUtils.js';
+import { testDbConnection } from './config/db.js';
+import { initDb } from './config/initDb.js';
 
 dotenv.config();
 
@@ -60,7 +62,7 @@ app.use((_req, res) => {
 app.use(globalErrorHandler);
 
 // ── Start Server ────────────────────────────────────────────────────────
-app.listen(config.port, () => {
+app.listen(config.port, async () => {
   console.log(`\n🚀 CampusAI Backend running at http://localhost:${config.port}`);
   console.log(`🔐 Auth API:    http://localhost:${config.port}/api/auth`);
   console.log(`👨‍🎓 Student API: http://localhost:${config.port}/api/student`);
@@ -69,6 +71,14 @@ app.listen(config.port, () => {
   console.log(`🏫 Org domain:  @${config.orgEmailDomain}`);
   console.log(`🌍 CORS origin: ${config.frontendUrl}`);
   console.log(`🔧 Mode:        ${config.nodeEnv}\n`);
+
+  // Connect and initialize PostgreSQL
+  const dbConnected = await testDbConnection();
+  if (dbConnected) {
+    await initDb();
+  } else {
+    console.warn('⚠️  PostgreSQL is not reachable. Running with in-memory fallback repositories.');
+  }
 });
 
 export default app;

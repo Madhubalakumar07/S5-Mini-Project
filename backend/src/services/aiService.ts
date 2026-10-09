@@ -1,7 +1,7 @@
 import { config } from '../config/index.js';
 import { COMPANY_PROFILES, analyzeStudentForCompany, getAllCompanyProfiles, CompanyRecruitmentProfile } from '../data/companyPlacementData.js';
 import { studentRepository } from '../repositories/mockStudentRepository.js';
-import { userRepository } from '../repositories/mockUserRepository.js';
+import { userRepository } from '../repositories/userRepository.js';
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -630,6 +630,49 @@ SELECT salary FROM (
     }
 
     return null;
+  }
+
+  /**
+   * Get Personalized AI Insights for the Student Dashboard
+   */
+  async getStudentInsights(studentId: string): Promise<{ summary: string; recommendedActions: string[] }> {
+    const user = await userRepository.findById(studentId);
+    const academicsData = await studentRepository.getAcademicsData(studentId);
+    const attendanceData = await studentRepository.getAttendanceData(studentId);
+
+    if (config.geminiApiKey) {
+      const prompt = `You are an AI Academic Advisor for ${user?.name || 'the student'}.
+Analyze the following student data and provide a concise JSON insight for their dashboard.
+Attendance: ${attendanceData.stats.overallPercentage}%
+Weak Subjects: ${academicsData.weakSubjects.map(s => s.subject).join(', ')}
+CGPA: ${user?.cgpa || 'N/A'}
+
+Return ONLY valid JSON matching this structure:
+{
+  "summary": "1-2 sentence concise insight mentioning specific numbers/subjects and trends.",
+  "recommendedActions": ["Action 1", "Action 2", "Action 3"]
+}`;
+      const response = await this.callGeminiAPI(prompt);
+      if (response) {
+        try {
+          const sanitized = response.replace(/```json/gi, '').replace(/```/g, '').trim();
+          return JSON.parse(sanitized);
+        } catch (e) {
+          console.warn('Failed to parse Gemini insight, falling back', e);
+        }
+      }
+    }
+
+    // Built-in fallback
+    const weakSub = academicsData.weakSubjects[0]?.subject || 'core subjects';
+    return {
+      summary: `Your overall attendance is solid at ${attendanceData.stats.overallPercentage}%, but focus is needed on ${weakSub} to improve your CGPA.`,
+      recommendedActions: [
+        `Review the latest study material for ${weakSub}`,
+        `Solve 2 medium DSA problems today`,
+        `Maintain 100% attendance in your next 3 classes`
+      ]
+    };
   }
 }
 

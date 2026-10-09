@@ -13,7 +13,7 @@ import { staffService } from '../services/staffService.js';
 import { validateOrgEmail } from '../utils/emailValidator.js';
 import { hashPassword, verifyPassword, validatePasswordStrength } from '../utils/passwordUtils.js';
 import { generateAccessToken, verifyAccessToken } from '../utils/tokenUtils.js';
-import { userRepository } from '../repositories/mockUserRepository.js';
+import { userRepository } from '../repositories/userRepository.js';
 
 // ── Simple test harness ───────────────────────────────────────────────────────
 let passed = 0;

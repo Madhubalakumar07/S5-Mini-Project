@@ -1,4 +1,4 @@
-import { userRepository } from '../repositories/mockUserRepository.js';
+import { userRepository } from '../repositories/userRepository.js';
 import { validateOrgEmail } from '../utils/emailValidator.js';
 import { hashPassword, verifyPassword, validatePasswordStrength } from '../utils/passwordUtils.js';
 import { generateAccessToken } from '../utils/tokenUtils.js';

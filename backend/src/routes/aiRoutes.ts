@@ -6,6 +6,7 @@ import {
   analyzeCompany,
   getCompaniesList,
   getCompanyDetails,
+  getStudentInsights,
 } from '../controllers/aiController.js';
 import { authenticateUser } from '../middleware/authMiddleware.js';
 
@@ -32,5 +33,8 @@ router.post('/summarize-pdf', upload.any(), summarizeStudyMaterial);
 router.post('/analyze-company', analyzeCompany);
 router.get('/companies', getCompaniesList);
 router.get('/companies/:id', getCompanyDetails);
+
+// Student Insights for Dashboard
+router.get('/student-insights', getStudentInsights);
 
 export default router;

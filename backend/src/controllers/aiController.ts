@@ -172,3 +172,13 @@ export const getCompanyDetails = async (req: AuthenticatedRequest, res: Response
     return sendError(res, err.message || 'Error retrieving company details.', 500);
   }
 };
+
+export const getStudentInsights = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
+  try {
+    const userId = req.user?.id || 'usr_student_1';
+    const insights = await aiService.getStudentInsights(userId);
+    return sendSuccess(res, insights, 'Student insights generated successfully');
+  } catch (err: any) {
+    return sendError(res, err.message || 'Error generating student insights.', 500);
+  }
+};

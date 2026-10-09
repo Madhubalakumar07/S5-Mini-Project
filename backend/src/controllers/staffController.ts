@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/authMiddleware.js';
 import { staffService } from '../services/staffService.js';
 import { sendSuccess, sendError } from '../utils/responseUtils.js';
-import { userRepository } from '../repositories/mockUserRepository.js';
+import { userRepository } from '../repositories/userRepository.js';
 
 export const getProfile = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
   try {
