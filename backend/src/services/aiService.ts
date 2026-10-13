@@ -1,6 +1,6 @@
 import { config } from '../config/index.js';
 import { COMPANY_PROFILES, analyzeStudentForCompany, getAllCompanyProfiles, CompanyRecruitmentProfile } from '../data/companyPlacementData.js';
-import { studentRepository } from '../repositories/mockStudentRepository.js';
+import { studentRepository } from '../repositories/studentRepository.js';
 import { userRepository } from '../repositories/userRepository.js';
 
 export interface ChatMessage {

@@ -1,4 +1,4 @@
-import { staffRepository } from '../repositories/mockStaffRepository.js';
+import { staffRepository } from '../repositories/staffRepository.js';
 import { AttendanceSession, AcademicMarkEntry, AIStudentSupportCase, Announcement } from '../types/index.js';
 
 export const staffService = {
