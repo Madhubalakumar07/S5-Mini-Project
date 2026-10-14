@@ -1,7 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import passport from 'passport';
 import { config } from './config/index.js';
+import { configurePassport } from './config/passport.js';
 import authRoutes from './routes/authRoutes.js';
 import studentRoutes from './routes/studentRoutes.js';
 import staffRoutes from './routes/staffRoutes.js';
@@ -14,6 +16,10 @@ import { initDb } from './config/initDb.js';
 dotenv.config();
 
 const app = express();
+
+// Configure Passport strategies
+configurePassport();
+app.use(passport.initialize());
 
 // ── Security & Parsing Middleware ───────────────────────────────────────
 app.use(

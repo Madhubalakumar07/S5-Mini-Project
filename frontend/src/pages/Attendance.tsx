@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine,
@@ -71,9 +71,9 @@ export const Attendance: React.FC = () => {
 
       {/* Attendance Trend Chart */}
       <motion.div variants={item}>
-        <ChartCard title="Attendance Trend" subtitle="Last 8 weeks — threshold at 75%">
+        <ChartCard title="Attendance Trend" subtitle="Last 8 weeks â€” threshold at 75%">
           <div className="h-52">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minHeight={1}>
               <AreaChart data={attendanceTrend} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
                 <defs>
                   <linearGradient id="attendGradient" x1="0" y1="0" x2="0" y2="1">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -112,7 +112,7 @@ export const Dashboard: React.FC = () => {
       <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
           <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-            {getGreeting()}, {student.firstName || student.name.split(' ')[0]} 👋
+            {getGreeting()}, {student.firstName || student.name.split(' ')[0]} ðŸ‘‹
           </h2>
           <p className="text-slate-500 text-sm mt-1 font-medium">Here's your academic and career overview for {student.department}.</p>
         </div>
@@ -145,12 +145,12 @@ export const Dashboard: React.FC = () => {
         <StatCard
           title="Academic Performance"
           value="8.4 CGPA"
-          subtitle="↑ 0.3 this semester"
+          subtitle="â†‘ 0.3 this semester"
           icon={<BookOpen size={18} />}
           accentColor="bg-indigo-50 text-indigo-600 border border-indigo-200/80"
         >
           <div className="h-10 mt-1">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minHeight={1}>
               <LineChart data={[{v:7.8},{v:8.1},{v:8.0},{v:8.3},{v:8.7}]} margin={{top:2,right:0,left:0,bottom:0}}>
                 <Line type="monotone" dataKey="v" stroke="#6366F1" strokeWidth={2.5} dot={false} />
               </LineChart>
@@ -294,7 +294,7 @@ export const Dashboard: React.FC = () => {
           }
         >
           <div className="h-48">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minHeight={1}>
               <LineChart data={performanceTrend} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
                 <XAxis dataKey="assessment" tick={{ fontSize: 11, fill: '#64748B', fontWeight: 500 }} />
@@ -323,7 +323,7 @@ export const Dashboard: React.FC = () => {
         <ChartCard title="Attendance Overview" subtitle="Current semester">
           <div className="flex flex-col items-center">
             <div className="h-40">
-              <ResponsiveContainer width={160} height="100%">
+              <ResponsiveContainer width={160} height="100%" minHeight={1}>
                 <PieChart>
                   <Pie
                     data={attendanceDonut}
@@ -348,7 +348,7 @@ export const Dashboard: React.FC = () => {
             </div>
             <div className="w-full mt-3 p-3 bg-indigo-50/80 border border-indigo-100 rounded-xl text-center">
               <p className="text-xs text-indigo-900 font-bold">Min required: 75%</p>
-              <p className="text-xs text-indigo-700 font-semibold mt-0.5">✅ Safely above threshold</p>
+              <p className="text-xs text-indigo-700 font-semibold mt-0.5">âœ… Safely above threshold</p>
             </div>
           </div>
         </ChartCard>

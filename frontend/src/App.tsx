@@ -5,8 +5,9 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { MainLayout } from './layouts/MainLayout';
 import { StaffLayout } from './layouts/StaffLayout';
 
-// Student Pages
+// Auth
 import { Login } from './pages/Login';
+import { GoogleAuthCallback } from './pages/GoogleAuthCallback';
 import { Dashboard } from './pages/Dashboard';
 import { Attendance } from './pages/Attendance';
 import { Academics } from './pages/Academics';
@@ -30,11 +31,12 @@ const RoleBasedRootRedirect: React.FC = () => {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
         <Routes>
-          {/* Public Auth Route */}
+          {/* Public Auth Routes */}
           <Route path="/login" element={<Login />} />
+          <Route path="/auth/google/callback" element={<GoogleAuthCallback />} />
 
           {/* Root Redirect based on logged in role */}
           <Route path="/" element={<RoleBasedRootRedirect />} />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer,
@@ -28,7 +28,7 @@ const container = {
 const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
 
 const radarData = placementBreakdown.map((b) => ({
-  subject: b.label.length > 12 ? b.label.substring(0, 10) + '…' : b.label,
+  subject: b.label.length > 12 ? b.label.substring(0, 10) + 'â€¦' : b.label,
   A: b.value,
 }));
 
@@ -52,7 +52,7 @@ export const Placement: React.FC = () => {
         <p className="text-gray-500 text-sm mt-1">Build the skills, resume, and confidence you need for your target companies.</p>
       </motion.div>
 
-      {/* Hero — Placement Score */}
+      {/* Hero â€” Placement Score */}
       <motion.div variants={item}>
         <div className="card p-6">
           <div className="flex flex-col lg:flex-row lg:items-center gap-6">
@@ -66,7 +66,7 @@ export const Placement: React.FC = () => {
               </ProgressRing>
               <div className="text-center lg:text-left">
                 <p className="text-sm font-semibold text-charcoal">Placement Readiness Score</p>
-                <Badge variant="success">Good Progress ↑+5 this month</Badge>
+                <Badge variant="success">Good Progress â†‘+5 this month</Badge>
               </div>
             </div>
 
@@ -88,7 +88,7 @@ export const Placement: React.FC = () => {
 
             {/* Radar */}
             <div className="w-full lg:w-48 h-48">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minHeight={1}>
                 <RadarChart data={radarData}>
                   <PolarGrid stroke="#E5E7EB" />
                   <PolarAngleAxis dataKey="subject" tick={{ fontSize: 9, fill: '#9CA3AF' }} />
@@ -130,7 +130,7 @@ export const Placement: React.FC = () => {
                   <div className="text-center">
                     <p className="text-xs font-semibold text-charcoal">{step.title}</p>
                     {step.completed ? (
-                      <Badge variant="success" size="sm">✓ Done</Badge>
+                      <Badge variant="success" size="sm">âœ“ Done</Badge>
                     ) : (
                       <p className="text-xs text-brand-600 font-medium">{step.progress}%</p>
                     )}
@@ -193,7 +193,7 @@ export const Placement: React.FC = () => {
               </p>
               {p.rating && <p className="text-xs text-gray-600">Rating: <span className="font-semibold">{p.rating}</span></p>}
               {p.streak && (
-                <p className="text-xs text-orange-600">🔥 {p.streak} day streak</p>
+                <p className="text-xs text-orange-600">ðŸ”¥ {p.streak} day streak</p>
               )}
               {p.stars && (
                 <div className="flex items-center gap-0.5">
@@ -217,7 +217,7 @@ export const Placement: React.FC = () => {
         <div className="lg:col-span-2">
           <div className="flex items-center justify-between mb-3">
             <h3 className="section-title">Recommended Companies</h3>
-            <p className="text-xs text-gray-400">Based on your profile · Not real-time hiring data</p>
+            <p className="text-xs text-gray-400">Based on your profile Â· Not real-time hiring data</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {recommendedCompanies.map((company) => (

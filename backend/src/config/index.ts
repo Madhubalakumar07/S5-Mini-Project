@@ -12,5 +12,9 @@ export const config = {
   databaseUrl: process.env.DATABASE_URL || 'postgres://postgres:2525@localhost:5432/miniproject',
   geminiApiKey: process.env.GEMINI_API_KEY || '',
   bcryptSaltRounds: 10,
+  googleClientId: process.env.GOOGLE_CLIENT_ID || '',
+  googleClientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+  googleCallbackUrl: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback',
 };
+
 

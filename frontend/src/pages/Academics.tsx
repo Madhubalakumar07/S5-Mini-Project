@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -61,7 +61,7 @@ export const Academics: React.FC = () => {
         {/* Subject Performance Bar Chart */}
         <ChartCard title="Subject Performance" subtitle="Internal assessment scores">
           <div className="h-52">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minHeight={1}>
               <BarChart data={subjectScores} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" vertical={false} />
                 <XAxis
@@ -87,7 +87,7 @@ export const Academics: React.FC = () => {
         {/* Semester Trend */}
         <ChartCard title="Assessment Performance Trend" subtitle="Across all subjects">
           <div className="h-52">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minHeight={1}>
               <LineChart data={performanceTrend} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
                 <XAxis dataKey="assessment" tick={{ fontSize: 10, fill: '#9CA3AF' }} />
@@ -128,7 +128,7 @@ export const Academics: React.FC = () => {
               </div>
               <ProgressBar percentage={ws.score} height={6} color="#F59E0B" trackColor="#FEF3C7" className="mb-3" />
               <div className="bg-gray-50 rounded-xl p-3 mb-3">
-                <p className="text-xs font-medium text-gray-700 mb-2">🤖 AI Recommendation</p>
+                <p className="text-xs font-medium text-gray-700 mb-2">ðŸ¤– AI Recommendation</p>
                 <p className="text-xs text-gray-600 leading-relaxed">{ws.recommendation}</p>
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   {ws.topics.map((t) => (
@@ -172,7 +172,7 @@ export const Academics: React.FC = () => {
           </div>
           <div className="mt-4 p-3 bg-brand-50 rounded-xl">
             <p className="text-xs text-brand-700 leading-relaxed">
-              💡 You're on track! Improving <strong>coding/practice consistency</strong> can raise your readiness score by ~5%.
+              ðŸ’¡ You're on track! Improving <strong>coding/practice consistency</strong> can raise your readiness score by ~5%.
             </p>
           </div>
         </div>

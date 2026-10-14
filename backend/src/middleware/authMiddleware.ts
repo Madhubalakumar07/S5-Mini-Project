@@ -4,9 +4,14 @@ import { sendError } from '../utils/responseUtils.js';
 import { JwtPayload } from '../types/index.js';
 import { config } from '../config/index.js';
 
-export interface AuthenticatedRequest extends Request {
-  user?: JwtPayload;
+declare global {
+  namespace Express {
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface
+    interface User extends JwtPayload {}
+  }
 }
+
+export type AuthenticatedRequest = Request;
 
 /**
  * Middleware that validates the Bearer JWT token in Authorization header.

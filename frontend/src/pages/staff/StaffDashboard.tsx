@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
@@ -134,7 +134,7 @@ export const StaffDashboard: React.FC = () => {
         <StatCard
           title="Average Attendance"
           value={`${staffCohortOverview.avgAttendance}%`}
-          subtitle="Target: ≥75.0%"
+          subtitle="Target: â‰¥75.0%"
           icon={<CalendarCheck size={18} />}
           trend="+1.8% vs last mo"
           trendPositive
@@ -158,7 +158,7 @@ export const StaffDashboard: React.FC = () => {
         <StatCard
           title="At-Risk Students"
           value={staffCohortOverview.atRiskStudentsCount}
-          subtitle={`${staffCohortOverview.highRiskCount} High · ${staffCohortOverview.mediumRiskCount} Med`}
+          subtitle={`${staffCohortOverview.highRiskCount} High Â· ${staffCohortOverview.mediumRiskCount} Med`}
           icon={<AlertTriangle size={18} />}
           trend="Action Needed"
           trendPositive={false}
@@ -184,7 +184,7 @@ export const StaffDashboard: React.FC = () => {
 
           {/* Chart */}
           <div className="h-56 w-full">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minHeight={1}>
               <LineChart data={attendanceTrendData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                 <XAxis dataKey="week" stroke="#94a3b8" fontSize={12} tickLine={false} />
@@ -237,12 +237,12 @@ export const StaffDashboard: React.FC = () => {
                     </div>
                     <div className="min-w-0">
                       <p className="text-xs font-bold text-slate-900 truncate hover:text-indigo-600">{st.name}</p>
-                      <p className="text-[10px] text-slate-500 truncate">{st.rollNumber} · {st.department}</p>
+                      <p className="text-[10px] text-slate-500 truncate">{st.rollNumber} Â· {st.department}</p>
                     </div>
                   </div>
                   <div className="text-right flex-shrink-0">
                     <span className="text-sm font-extrabold text-rose-600 block">{st.attendance}%</span>
-                    <span className="text-[10px] text-rose-500 font-semibold">Inspect Profile →</span>
+                    <span className="text-[10px] text-rose-500 font-semibold">Inspect Profile â†’</span>
                   </div>
                 </div>
               ))}
@@ -266,7 +266,7 @@ export const StaffDashboard: React.FC = () => {
 
             {/* Bar chart */}
             <div className="h-44 w-full">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minHeight={1}>
                 <BarChart data={gradeDistribution} layout="vertical">
                   <XAxis type="number" stroke="#94a3b8" fontSize={11} hide />
                   <YAxis dataKey="grade" type="category" stroke="#64748b" fontSize={11} tickLine={false} width={100} />
@@ -374,7 +374,7 @@ export const StaffDashboard: React.FC = () => {
                     </div>
                     <div className="min-w-0">
                       <h4 className="text-xs font-bold text-slate-900 truncate hover:text-indigo-600">{student.name}</h4>
-                      <p className="text-[11px] text-slate-500 truncate">{student.rollNumber} · {student.department}</p>
+                      <p className="text-[11px] text-slate-500 truncate">{student.rollNumber} Â· {student.department}</p>
                     </div>
                   </div>
 
@@ -387,7 +387,7 @@ export const StaffDashboard: React.FC = () => {
                         : 'bg-emerald-100 text-emerald-800'
                     }`}
                   >
-                    {isHigh ? '🔴 High Risk' : isMed ? '🟠 Medium Risk' : '🟢 Low Risk'}
+                    {isHigh ? 'ðŸ”´ High Risk' : isMed ? 'ðŸŸ  Medium Risk' : 'ðŸŸ¢ Low Risk'}
                   </span>
                 </div>
 
