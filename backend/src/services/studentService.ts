@@ -1,4 +1,4 @@
-import { studentRepository } from '../repositories/mockStudentRepository.js';
+import { studentRepository } from '../repositories/studentRepository.js';
 
 export const studentService = {
   /**
