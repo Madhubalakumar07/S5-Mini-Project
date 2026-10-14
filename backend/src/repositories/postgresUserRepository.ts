@@ -19,6 +19,7 @@ const BASE_QUERY = `
     s.register_number AS student_roll_number,
     s.phone AS student_phone,
     s.year AS student_year,
+    s.cgpa AS student_cgpa,
     st.department AS staff_department,
     st.designation AS staff_designation,
     st.employee_id AS staff_id
@@ -42,6 +43,7 @@ function mapRowToUser(row: any): User {
     batch: row.student_year ? `20${23 + (4 - Number(row.student_year))}` : undefined,
     year: row.student_year ? Number(row.student_year) : undefined,
     phone: row.student_phone || undefined,
+    cgpa: row.student_cgpa !== null && row.student_cgpa !== undefined ? Number(row.student_cgpa) : undefined,
     createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : (row.created_at || new Date().toISOString()),
     updatedAt: row.updated_at instanceof Date ? row.updated_at.toISOString() : (row.updated_at || new Date().toISOString()),
   };
