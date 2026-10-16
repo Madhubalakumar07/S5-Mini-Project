@@ -101,6 +101,7 @@ export class MockUserRepository implements IUserRepository {
     const newUser: User = {
       id: `usr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       ...userData,
+      passwordHash: userData.passwordHash || DEFAULT_TEST_PASSWORD_HASH,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

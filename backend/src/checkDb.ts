@@ -1,7 +1,13 @@
 import { studentRepository } from './repositories/studentRepository.js';
 import { userRepository } from './repositories/userRepository.js';
+import { testDbConnection } from './config/db.js';
+import { initDb } from './config/initDb.js';
 
 async function main() {
+  const connected = await testDbConnection();
+  if (connected) {
+    await initDb();
+  }
   const user = await userRepository.findByEmail('farhana.yasmin@bitsathy.ac.in');
   console.log('User found from DB:', user?.name, user?.id, user?.role);
   if (user) {

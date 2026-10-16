@@ -1,6 +1,6 @@
 -- ====================================================================
 -- PostgreSQL Database Schema for CampusAI / S5-Mini-Project
--- Database: miniproject
+-- Database: Campus_AI
 -- User: postgres
 -- Port: 5432
 -- ====================================================================
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
   id VARCHAR(255) PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL DEFAULT '$2a$10$ARA5NA19JLkLLhBBA/BvOeIUUodRS/5H6.ogqFN1Kf95mInAJFrzW', -- default: password123
   role VARCHAR(50) NOT NULL,
   department VARCHAR(255) NOT NULL,
   roll_number VARCHAR(100),

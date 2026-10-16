@@ -1,4 +1,4 @@
-﻿import passport from 'passport';
+import passport from 'passport';
 import { Strategy as GoogleStrategy, Profile } from 'passport-google-oauth20';
 import { config } from './index.js';
 import { userRepository } from '../repositories/userRepository.js';
@@ -35,23 +35,15 @@ export const configurePassport = () => {
             );
           }
 
-          // Find existing user or auto-register them
-          let user = await userRepository.findByEmail(email);
+          // Verify that user exists in the database
+          const user = await userRepository.findByEmail(email.trim().toLowerCase());
 
           if (!user) {
-            // Hash a random placeholder — this account can ONLY be accessed via Google OAuth
-            const passwordHash = await bcrypt.hash(
-              `google_oauth_${profile.id}_${Date.now()}`,
-              config.bcryptSaltRounds
+            // Reject: Only users registered in the database can access the platform
+            return done(
+              new Error(`NOT_REGISTERED: Your email (${email}) is not registered in the database. Access is permitted for registered accounts only.`),
+              undefined
             );
-
-            user = await userRepository.create({
-              name,
-              email,
-              passwordHash,
-              role: 'STUDENT',
-              department: 'General',
-            });
           }
 
           // Issue a JWT exactly like the normal login flow

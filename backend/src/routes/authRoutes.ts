@@ -31,8 +31,8 @@ router.get(
   (req, res, next) => {
     passport.authenticate('google', { session: false }, (err: any, user: any) => {
       if (err || !user) {
-        // Domain restricted or other auth error — redirect with message
-        return googleAuthFailure(req, res);
+        // Domain restricted or not registered or other auth error — redirect with message
+        return googleAuthFailure(req, res, err);
       }
       // Attach user to request so googleAuthCallback can read it
       req.user = user;

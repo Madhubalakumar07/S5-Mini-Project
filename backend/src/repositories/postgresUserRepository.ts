@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto';
+import bcrypt from 'bcryptjs';
 import { IUserRepository } from './IUserRepository.js';
 import { User, SafeUser } from '../types/index.js';
 import { pool } from '../config/db.js';
@@ -80,6 +81,8 @@ export class PostgresUserRepository implements IUserRepository {
 
   async create(userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
     const userId = randomUUID();
+    const defaultPasswordHash = await bcrypt.hash('password123', 10);
+    const passwordHash = userData.passwordHash || defaultPasswordHash;
 
     await pool.query(
       `INSERT INTO users (id, name, email, password_hash, role, is_active, created_at, updated_at)
@@ -87,9 +90,9 @@ export class PostgresUserRepository implements IUserRepository {
       [
         userId,
         userData.name,
-        userData.email.toLowerCase(),
-        userData.passwordHash,
-        userData.role,
+        userData.email.toLowerCase().trim(),
+        passwordHash,
+        userData.role || 'STUDENT',
       ]
     );
 

@@ -1,4 +1,4 @@
-﻿import { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { config } from '../config/index.js';
 
 /**
@@ -48,9 +48,25 @@ export const googleAuthCallback = (req: Request, res: Response): void => {
  * Called when passport.authenticate fails (e.g. domain restriction).
  * Redirects to the login page with a human-readable error message.
  */
-export const googleAuthFailure = (req: Request, res: Response): void => {
-  const msg = encodeURIComponent(
-    `Only @${config.orgEmailDomain} Google accounts are permitted. Please sign in with your institutional email.`
-  );
-  res.redirect(`${config.frontendUrl}/login?error=domain_restricted&msg=${msg}`);
+export const googleAuthFailure = (req: Request, res: Response, err?: any): void => {
+  const errMsg = err?.message || '';
+
+  if (errMsg.includes('NOT_REGISTERED')) {
+    const msg = encodeURIComponent(
+      'Access Denied: Your Google account is not registered in the database. Only pre-registered users can access the platform.'
+    );
+    res.redirect(`${config.frontendUrl}/login?error=not_registered&msg=${msg}`);
+    return;
+  }
+
+  if (errMsg.includes('DOMAIN_RESTRICTED')) {
+    const msg = encodeURIComponent(
+      `Only @${config.orgEmailDomain} Google accounts are permitted. Please sign in with your institutional email.`
+    );
+    res.redirect(`${config.frontendUrl}/login?error=domain_restricted&msg=${msg}`);
+    return;
+  }
+
+  const msg = encodeURIComponent(errMsg || 'Google authentication failed. Please try again.');
+  res.redirect(`${config.frontendUrl}/login?error=google_auth_failed&msg=${msg}`);
 };

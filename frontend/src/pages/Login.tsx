@@ -31,6 +31,8 @@ export const Login: React.FC = () => {
   // Pick up any error message the backend injected via redirect (e.g., domain restriction)
   const urlError = searchParams.get('msg')
     ? decodeURIComponent(searchParams.get('msg')!)
+    : searchParams.get('error') === 'not_registered'
+    ? 'Access Denied: Your Google account is not registered in the database. Only pre-registered users can access the platform.'
     : searchParams.get('error') === 'domain_restricted'
     ? `Only @${ORG_DOMAIN} Google accounts are permitted. Use your institutional email.`
     : searchParams.get('error') === 'google_auth_failed'

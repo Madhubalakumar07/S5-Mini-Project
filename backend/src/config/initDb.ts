@@ -590,13 +590,18 @@ export const initDb = async () => {
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
-        password_hash VARCHAR(255) NOT NULL,
+        password_hash VARCHAR(255) NOT NULL DEFAULT '$2a$10$ARA5NA19JLkLLhBBA/BvOeIUUodRS/5H6.ogqFN1Kf95mInAJFrzW',
         role VARCHAR(50) NOT NULL,
         is_active BOOLEAN DEFAULT TRUE,
         created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `);
+
+    // Ensure default password_hash is set to 'password123' for any newly inserted users
+    await pool.query(`
+      ALTER TABLE users ALTER COLUMN password_hash SET DEFAULT '$2a$10$ARA5NA19JLkLLhBBA/BvOeIUUodRS/5H6.ogqFN1Kf95mInAJFrzW';
+    `).catch(() => {});
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS students (
@@ -674,6 +679,71 @@ export const initDb = async () => {
         designation VARCHAR(255),
         employee_id VARCHAR(100),
         created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS subjects (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        subject_code VARCHAR(50) UNIQUE NOT NULL,
+        subject_name VARCHAR(255) NOT NULL,
+        semester INTEGER NOT NULL,
+        credits INTEGER NOT NULL,
+        created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS companies (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        company_name VARCHAR(255) UNIQUE NOT NULL,
+        description TEXT,
+        job_role VARCHAR(255),
+        location VARCHAR(255),
+        package VARCHAR(50),
+        eligibility TEXT,
+        application_deadline DATE,
+        created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS academic_records (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        student_id UUID REFERENCES students(id) ON DELETE CASCADE,
+        subject_id UUID REFERENCES subjects(id) ON DELETE CASCADE,
+        marks NUMERIC(5,2),
+        grade VARCHAR(10),
+        grade_point NUMERIC(4,2),
+        semester INTEGER,
+        academic_year VARCHAR(50),
+        created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS attendance (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        student_id UUID REFERENCES students(id) ON DELETE CASCADE,
+        subject_id UUID REFERENCES subjects(id) ON DELETE CASCADE,
+        date DATE DEFAULT CURRENT_DATE,
+        status VARCHAR(50),
+        percentage NUMERIC(5,2),
+        created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS placement_applications (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        student_id UUID REFERENCES students(id) ON DELETE CASCADE,
+        company_id UUID REFERENCES companies(id) ON DELETE CASCADE,
+        status VARCHAR(100),
+        applied_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `);
