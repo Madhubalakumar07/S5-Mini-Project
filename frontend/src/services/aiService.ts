@@ -1,5 +1,5 @@
 import { apiClient } from './apiClient';
-import type { SummarizePdfResult, CompanyAnalysisResult, CompanyRecruitmentProfile } from '../types';
+import type { SummarizePdfResult, CompanyAnalysisResult, CompanyRecruitmentProfile, StudentAIAnalysis } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -353,22 +353,48 @@ export const aiService = {
   },
 
   /**
-   * Get personalized student insights for the dashboard
+   * Get personalized student analysis from Groq AI for the dashboard
    */
-  async getStudentInsights(): Promise<{ summary: string; recommendedActions: string[] }> {
+  async getStudentInsights(): Promise<StudentAIAnalysis> {
     try {
       const response = await apiClient.get('/ai/student-insights');
       return response.data || response;
     } catch (err: any) {
       // Fallback if offline
       return {
-        summary: "Your attendance is strong, but Data Structures performance has dropped 8% over the last two assessments.",
+        performanceSummary: "Your attendance is strong, but Data Structures performance has dropped over the last two assessments. Focused preparation recommended.",
+        summary: "Your attendance is strong, but Data Structures performance has dropped over the last two assessments. Focused preparation recommended.",
+        attendanceRiskLevel: 'Low',
+        attendanceRiskExplanation: "Attendance is in good standing (>85%).",
+        academicWeaknesses: ['Data Structures (Trees & Graphs)'],
+        personalizedRecommendations: [
+          'Practice 5 medium-level DSA problems today',
+          'Review Trees and Graphs chapter',
+          'Attend the upcoming DSA revision session'
+        ],
+        recommendations: [
+          'Practice 5 medium-level DSA problems today',
+          'Review Trees and Graphs chapter',
+          'Attend the upcoming DSA revision session'
+        ],
         recommendedActions: [
           'Practice 5 medium-level DSA problems today',
           'Review Trees and Graphs chapter',
           'Attend the upcoming DSA revision session'
+        ],
+        improvementPlan: [
+          { weekOrPhase: 'Week 1', focusArea: 'DSA Review', action: 'Review Trees & Graphs concepts' },
+          { weekOrPhase: 'Week 2', focusArea: 'Problem Solving', action: 'Solve 10 LeetCode Medium problems' }
         ]
       };
     }
+  },
+
+  /**
+   * Request full AI student analysis powered by Groq API (openai/gpt-oss-120b)
+   */
+  async analyzeStudent(): Promise<StudentAIAnalysis> {
+    const response = await apiClient.get('/ai/analyze-student');
+    return response.data || response;
   }
 };

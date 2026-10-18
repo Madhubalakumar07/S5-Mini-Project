@@ -18,6 +18,7 @@ interface AuthContextType {
   logout: () => void;
   updateStudentProfile: (data: Partial<Student>) => void;
   updateStaffProfile: (data: Partial<StaffProfile>) => void;
+  setSession: (token: string, user: AuthUser) => void;
 }
 
 const defaultStudent: Student = {
@@ -235,6 +236,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const setSession = (newToken: string, newUser: AuthUser) => {
+    localStorage.setItem('auth_token', newToken);
+    localStorage.setItem('auth_user', JSON.stringify(newUser));
+    setToken(newToken);
+    setUser(newUser);
+    setStudent(buildStudentFromUser(newUser));
+    setStaffProfile(buildStaffFromUser(newUser));
+    setIsLoading(false);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -252,6 +263,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         logout,
         updateStudentProfile,
         updateStaffProfile,
+        setSession,
       }}
     >
       {children}

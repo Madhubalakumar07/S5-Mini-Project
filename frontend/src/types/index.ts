@@ -337,3 +337,31 @@ export interface CompanyAnalysisResult {
   recommendations: string[];
 }
 
+export interface StudentAIAnalysis {
+  performanceSummary: string;
+  summary: string;
+  attendanceRiskLevel: 'Low' | 'Medium' | 'High';
+  attendanceRiskExplanation?: string;
+  academicWeaknesses: string[];
+  personalizedRecommendations: string[];
+  recommendations: string[];
+  recommendedActions: string[];
+  improvementPlan: Array<{
+    weekOrPhase: string;
+    focusArea: string;
+    action: string;
+  }>;
+  analyzedAt?: string;
+  modelUsed?: string;
+  student?: {
+    id: string;
+    name: string;
+    department: string;
+    rollNumber?: string;
+    attendancePercentage: number;
+    cgpa: number;
+    averageInternal: number;
+    averageAssignmentScore: number;
+  };
+}
+

@@ -35,6 +35,8 @@ export const Login: React.FC = () => {
     ? 'Access Denied: Your Google account is not registered in the database. Only pre-registered users can access the platform.'
     : searchParams.get('error') === 'domain_restricted'
     ? `Only @${ORG_DOMAIN} Google accounts are permitted. Use your institutional email.`
+    : searchParams.get('error') === 'google_not_configured'
+    ? 'Google OAuth is not configured on this server. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in backend/.env.'
     : searchParams.get('error') === 'google_auth_failed'
     ? 'Google sign-in failed. Please try again.'
     : null;

@@ -8,6 +8,11 @@ import bcrypt from 'bcryptjs';
 const ORG_DOMAIN = config.orgEmailDomain; // 'bitsathy.ac.in'
 
 export const configurePassport = () => {
+  if (!config.googleClientId || !config.googleClientSecret) {
+    console.warn('⚠️  Google OAuth is disabled: GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET not set in .env.');
+    return;
+  }
+
   passport.use(
     new GoogleStrategy(
       {

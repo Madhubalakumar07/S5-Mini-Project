@@ -54,6 +54,34 @@ export class MockUserRepository implements IUserRepository {
       createdAt: '2026-01-01T00:00:00.000Z',
       updatedAt: '2026-01-01T00:00:00.000Z',
     },
+    {
+      id: 'student_4',
+      name: 'Rahul Kumar',
+      email: 'rahul.kumar@bitsathy.ac.in',
+      passwordHash: DEFAULT_TEST_PASSWORD_HASH,
+      role: 'STUDENT',
+      department: 'Computer Science',
+      rollNumber: '21CS045',
+      batch: '2026',
+      phone: '+91 98765 11001',
+      cgpa: 6.8,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z',
+    },
+    {
+      id: 'student_5',
+      name: 'Sneha Mohan',
+      email: 'sneha.mohan@bitsathy.ac.in',
+      passwordHash: DEFAULT_TEST_PASSWORD_HASH,
+      role: 'STUDENT',
+      department: 'Computer Science',
+      rollNumber: '21CS082',
+      batch: '2026',
+      phone: '+91 98765 11002',
+      cgpa: 7.1,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z',
+    },
 
     // ─── Staff / Faculty ─────────────────────────────────────────────────
     {
@@ -84,6 +112,20 @@ export class MockUserRepository implements IUserRepository {
       createdAt: '2026-01-01T00:00:00.000Z',
       updatedAt: '2026-01-01T00:00:00.000Z',
     },
+    {
+      id: 'staff_3',
+      name: 'Dr. Uma Maheshwari',
+      email: 'uma.m@bitsathy.ac.in',
+      passwordHash: DEFAULT_TEST_PASSWORD_HASH,
+      role: 'STAFF',
+      department: 'Computer Science & Engineering',
+      staffId: 'STF-CS-010',
+      designation: 'Professor & Class Advisor',
+      batch: 'Faculty',
+      phone: '+91 94432 18701',
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z',
+    },
   ];
 
   async findByEmail(email: string): Promise<User | null> {
@@ -93,7 +135,7 @@ export class MockUserRepository implements IUserRepository {
   }
 
   async findById(id: string): Promise<User | null> {
-    const user = this.users.find((u) => u.id === id);
+    const user = this.users.find((u) => u.id === id || (id === 'usr_student_1' && u.id === 'student_1'));
     return user ? { ...user } : null;
   }
 

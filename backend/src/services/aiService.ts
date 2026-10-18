@@ -2,6 +2,7 @@ import { config } from '../config/index.js';
 import { COMPANY_PROFILES, analyzeStudentForCompany, getAllCompanyProfiles, CompanyRecruitmentProfile } from '../data/companyPlacementData.js';
 import { studentRepository } from '../repositories/studentRepository.js';
 import { userRepository } from '../repositories/userRepository.js';
+import { groqService } from './groqService.js';
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -633,46 +634,50 @@ SELECT salary FROM (
   }
 
   /**
-   * Get Personalized AI Insights for the Student Dashboard
+   * Get Personalized AI Insights for the Student Dashboard using Groq API (openai/gpt-oss-120b)
    */
-  async getStudentInsights(studentId: string): Promise<{ summary: string; recommendedActions: string[] }> {
-    const user = await userRepository.findById(studentId);
-    const academicsData = await studentRepository.getAcademicsData(studentId);
-    const attendanceData = await studentRepository.getAttendanceData(studentId);
-
-    if (config.geminiApiKey) {
-      const prompt = `You are an AI Academic Advisor for ${user?.name || 'the student'}.
-Analyze the following student data and provide a concise JSON insight for their dashboard.
-Attendance: ${attendanceData.stats.overallPercentage}%
-Weak Subjects: ${academicsData.weakSubjects.map(s => s.subject).join(', ')}
-CGPA: ${user?.cgpa || 'N/A'}
-
-Return ONLY valid JSON matching this structure:
-{
-  "summary": "1-2 sentence concise insight mentioning specific numbers/subjects and trends.",
-  "recommendedActions": ["Action 1", "Action 2", "Action 3"]
-}`;
-      const response = await this.callGeminiAPI(prompt);
-      if (response) {
-        try {
-          const sanitized = response.replace(/```json/gi, '').replace(/```/g, '').trim();
-          return JSON.parse(sanitized);
-        } catch (e) {
-          console.warn('Failed to parse Gemini insight, falling back', e);
-        }
+  async getStudentInsights(studentId: string): Promise<any> {
+    try {
+      // Primary: Call Groq service
+      return await groqService.analyzeStudent(studentId);
+    } catch (groqErr: any) {
+      // If Groq API key is not configured or fails, use grounded actual student data analysis
+      try {
+        const studentData = await groqService.fetchStudentData(studentId);
+        return groqService.generateLocalAnalysis(
+          studentData,
+          groqErr.code === 'MISSING_GROQ_API_KEY'
+            ? 'Set GROQ_API_KEY in backend/.env for live openai/gpt-oss-120b inference'
+            : `Groq AI notice: ${groqErr.message}`
+        );
+      } catch (fallbackErr) {
+        // Ultimate fallback
+        const user = await userRepository.findById(studentId);
+        const academicsData = await studentRepository.getAcademicsData(studentId);
+        const attendanceData = await studentRepository.getAttendanceData(studentId);
+        const weakSub = academicsData.weakSubjects[0]?.subject || 'core subjects';
+        const summary = `Your overall attendance is solid at ${attendanceData.stats.overallPercentage}%, but focus is needed on ${weakSub} to improve your CGPA.`;
+        const recommendedActions = [
+          `Review the latest study material for ${weakSub}`,
+          `Solve 2 medium DSA problems today`,
+          `Maintain 100% attendance in your next 3 classes`,
+        ];
+        return {
+          performanceSummary: summary,
+          summary,
+          attendanceRiskLevel: attendanceData.stats.overallPercentage < 75 ? 'High' : attendanceData.stats.overallPercentage < 85 ? 'Medium' : 'Low',
+          attendanceRiskExplanation: `Attendance is ${attendanceData.stats.overallPercentage}%.`,
+          academicWeaknesses: [weakSub],
+          personalizedRecommendations: recommendedActions,
+          recommendations: recommendedActions,
+          recommendedActions,
+          improvementPlan: [
+            { weekOrPhase: 'Week 1', focusArea: weakSub, action: `Review study material and practice problem sets for ${weakSub}` },
+            { weekOrPhase: 'Week 2', focusArea: 'DSA Practice', action: 'Solve 2 medium problems daily' }
+          ],
+        };
       }
     }
-
-    // Built-in fallback
-    const weakSub = academicsData.weakSubjects[0]?.subject || 'core subjects';
-    return {
-      summary: `Your overall attendance is solid at ${attendanceData.stats.overallPercentage}%, but focus is needed on ${weakSub} to improve your CGPA.`,
-      recommendedActions: [
-        `Review the latest study material for ${weakSub}`,
-        `Solve 2 medium DSA problems today`,
-        `Maintain 100% attendance in your next 3 classes`
-      ]
-    };
   }
 }
 

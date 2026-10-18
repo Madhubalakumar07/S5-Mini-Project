@@ -1,16 +1,19 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Sparkles, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+import { useAuth } from '../context/AuthContext';
+
 /**
  * GoogleAuthCallback — landing page after Google OAuth redirect.
  * Reads ?token=...&user=... from the URL (set by the backend),
- * stores them in localStorage, then redirects to the appropriate dashboard.
+ * stores them in localStorage & AuthContext, then redirects to the appropriate dashboard.
  */
 export const GoogleAuthCallback: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { setSession } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -27,9 +30,8 @@ export const GoogleAuthCallback: React.FC = () => {
     try {
       const user = JSON.parse(decodeURIComponent(userRaw));
 
-      // Store exactly like the normal login flow
-      localStorage.setItem('auth_token', token);
-      localStorage.setItem('auth_user', JSON.stringify(user));
+      // Store in localStorage & synchronize React state
+      setSession(token, user);
 
       // Redirect to the correct dashboard
       const role = (user.role || '').toLowerCase();
@@ -38,7 +40,7 @@ export const GoogleAuthCallback: React.FC = () => {
       setError('Failed to process sign-in data. Please try again.');
       setTimeout(() => navigate('/login', { replace: true }), 3000);
     }
-  }, []);
+  }, [searchParams, navigate, setSession]);
 
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center">

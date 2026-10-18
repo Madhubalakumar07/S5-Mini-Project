@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -20,6 +20,7 @@ import { codingPlatforms } from '../data/codingData';
 
 import { useAuth } from '../context/AuthContext';
 import { aiService } from '../services/aiService';
+import type { StudentAIAnalysis } from '../types';
 
 const subjectColors: Record<string, string> = {
   dataStructures: '#6366F1',
@@ -82,7 +83,7 @@ export const Dashboard: React.FC = () => {
     cn: true,
   });
   const [aiDismissed, setAiDismissed] = useState(false);
-  const [aiInsight, setAiInsight] = useState<{ summary: string; recommendedActions: string[] } | null>(null);
+  const [aiInsight, setAiInsight] = useState<StudentAIAnalysis | null>(null);
 
   React.useEffect(() => {
     aiService.getStudentInsights().then((data) => {
@@ -193,17 +194,44 @@ export const Dashboard: React.FC = () => {
                 <Sparkles size={20} />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1.5">
+                <div className="flex flex-wrap items-center gap-2 mb-1.5">
                   <h3 className="font-bold text-slate-900">AI Study Assistant</h3>
-                  <Badge variant="brand" size="sm">AI INSIGHT</Badge>
+                  <Badge variant="brand" size="sm">GROQ AI</Badge>
+                  {aiInsight.attendanceRiskLevel && (
+                    <Badge
+                      variant={
+                        aiInsight.attendanceRiskLevel.toLowerCase() === 'high' ? 'danger' :
+                        aiInsight.attendanceRiskLevel.toLowerCase() === 'medium' ? 'warning' : 'success'
+                      }
+                      size="sm"
+                    >
+                      Attendance Risk: {aiInsight.attendanceRiskLevel}
+                    </Badge>
+                  )}
                 </div>
                 <p className="text-sm text-slate-600 mb-3 leading-relaxed">
-                  {aiInsight.summary}
+                  {aiInsight.performanceSummary || aiInsight.summary}
                 </p>
+
+                {/* Academic Weaknesses */}
+                {aiInsight.academicWeaknesses && aiInsight.academicWeaknesses.length > 0 && (
+                  <div className="mb-3">
+                    <p className="text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Academic Weaknesses & Focus Areas</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {aiInsight.academicWeaknesses.map((weakness: string, i: number) => (
+                        <span key={i} className="text-xs font-medium px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200/80 rounded-lg">
+                          • {weakness}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Personalized Recommendations */}
                 <div className="mb-4">
-                  <p className="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">Recommended actions</p>
+                  <p className="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">Personalized Recommendations</p>
                   <ul className="space-y-1.5">
-                    {aiInsight.recommendedActions.map((action, i) => (
+                    {(aiInsight.personalizedRecommendations || aiInsight.recommendedActions || []).map((action: string, i: number) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-slate-700 font-medium">
                         <span className="w-4 h-4 bg-indigo-600 text-white rounded-full flex items-center justify-center text-[10px] font-extrabold flex-shrink-0 mt-0.5 shadow-xs">
                           {i + 1}
@@ -213,6 +241,32 @@ export const Dashboard: React.FC = () => {
                     ))}
                   </ul>
                 </div>
+
+                {/* Improvement Plan */}
+                {aiInsight.improvementPlan && aiInsight.improvementPlan.length > 0 && (
+                  <div className="mb-4 p-3 bg-indigo-50/60 rounded-xl border border-indigo-100">
+                    <p className="text-xs font-bold text-indigo-900 mb-1.5 uppercase tracking-wider">Improvement Plan</p>
+                    <div className="space-y-1.5">
+                      {aiInsight.improvementPlan.map((step: any, idx: number) => (
+                        <div key={idx} className="text-xs text-indigo-950 flex items-start gap-2">
+                          <span className="font-bold text-indigo-600 shrink-0">
+                            {typeof step === 'string' ? `Phase ${idx + 1}:` : `${step.weekOrPhase}:`}
+                          </span>
+                          <span>
+                            {typeof step === 'string' ? (
+                              step
+                            ) : (
+                              <>
+                                <strong className="text-slate-800">{step.focusArea}</strong> — {step.action}
+                              </>
+                            )}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex flex-wrap gap-2">
                   <Button variant="primary" size="sm">
                     View Study Plan <ChevronRight size={13} />

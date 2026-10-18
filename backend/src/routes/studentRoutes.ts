@@ -6,6 +6,7 @@ import {
   getAcademics,
   getPlacement,
 } from '../controllers/studentController.js';
+import { analyzeStudentWithGroq } from '../controllers/aiController.js';
 import { authenticateUser } from '../middleware/authMiddleware.js';
 import { requireStudent } from '../middleware/roleMiddleware.js';
 
@@ -19,5 +20,6 @@ router.get('/dashboard', getDashboard);
 router.get('/attendance', getAttendance);
 router.get('/academics', getAcademics);
 router.get('/placement', getPlacement);
+router.get('/ai-analysis', analyzeStudentWithGroq);
 
 export default router;

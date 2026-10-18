@@ -7,6 +7,7 @@ import {
   getCompaniesList,
   getCompanyDetails,
   getStudentInsights,
+  analyzeStudentWithGroq,
 } from '../controllers/aiController.js';
 import { authenticateUser } from '../middleware/authMiddleware.js';
 
@@ -34,7 +35,12 @@ router.post('/analyze-company', analyzeCompany);
 router.get('/companies', getCompaniesList);
 router.get('/companies/:id', getCompanyDetails);
 
-// Student Insights for Dashboard
+// Student Insights for Dashboard (Powered by Groq)
 router.get('/student-insights', getStudentInsights);
+
+// Dedicated Groq AI Student Analysis Endpoints (openai/gpt-oss-120b)
+router.get('/analyze-student', analyzeStudentWithGroq);
+router.post('/analyze-student', analyzeStudentWithGroq);
+router.get('/student-analysis', analyzeStudentWithGroq);
 
 export default router;

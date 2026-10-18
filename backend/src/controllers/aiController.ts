@@ -4,6 +4,7 @@ import { aiService } from '../services/aiService.js';
 import { sendSuccess, sendError } from '../utils/responseUtils.js';
 import { getAllCompanyProfiles, COMPANY_PROFILES } from '../data/companyPlacementData.js';
 import { PDFParse } from 'pdf-parse';
+import { groqService } from '../services/groqService.js';
 
 /**
  * Robust extraction of text from PDF / document buffer
@@ -173,12 +174,50 @@ export const getCompanyDetails = async (req: AuthenticatedRequest, res: Response
   }
 };
 
+export const analyzeStudentWithGroq = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
+  try {
+    const userId = req.user?.id || 'usr_student_1';
+    const analysis = await groqService.analyzeStudent(userId);
+    return sendSuccess(res, analysis, 'Student AI analysis generated successfully via Groq');
+  } catch (err: any) {
+    const status = err.statusCode || 500;
+    return sendError(res, err.message || 'Error generating student analysis with Groq.', status, err.code);
+  }
+};
+
 export const getStudentInsights = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
   try {
     const userId = req.user?.id || 'usr_student_1';
-    const insights = await aiService.getStudentInsights(userId);
-    return sendSuccess(res, insights, 'Student insights generated successfully');
+
+    try {
+      // Primary: analyze real database student data using Groq API model openai/gpt-oss-120b
+      const groqAnalysis = await groqService.analyzeStudent(userId);
+      return sendSuccess(res, groqAnalysis, 'Student insights generated successfully via Groq AI');
+    } catch (groqErr: any) {
+      // If Groq API key is missing or encounters a network/provider failure,
+      // fall back to data-grounded analysis from actual PostgreSQL records
+      if (
+        groqErr.code === 'MISSING_GROQ_API_KEY' ||
+        groqErr.code === 'GROQ_API_FAILURE' ||
+        groqErr.code === 'GROQ_NETWORK_ERROR' ||
+        groqErr.statusCode === 503 ||
+        groqErr.statusCode === 502
+      ) {
+        console.warn(`[Groq AI Fallback]: ${groqErr.message}`);
+        const studentData = await groqService.fetchStudentData(userId);
+        const fallbackAnalysis = groqService.generateLocalAnalysis(
+          studentData,
+          groqErr.code === 'MISSING_GROQ_API_KEY'
+            ? 'Note: Add GROQ_API_KEY to backend/.env for live openai/gpt-oss-120b analysis'
+            : `Note: Groq API temporarily unavailable (${groqErr.message})`
+        );
+        return sendSuccess(res, fallbackAnalysis, 'Student insights generated from student records');
+      }
+
+      // If it's invalid student data (404/400), propagate it directly
+      return sendError(res, groqErr.message, groqErr.statusCode || 500, groqErr.code);
+    }
   } catch (err: any) {
-    return sendError(res, err.message || 'Error generating student insights.', 500);
+    return sendError(res, err.message || 'Error generating student insights.', err.statusCode || 500);
   }
 };
