@@ -1,7 +1,7 @@
 import { apiClient } from './apiClient';
 import type { SummarizePdfResult, CompanyAnalysisResult, CompanyRecruitmentProfile, StudentAIAnalysis } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 /**
  * Client-side fallback text extractor for when server is offline or fails

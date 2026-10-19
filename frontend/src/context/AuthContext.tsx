@@ -148,6 +148,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (payload: LoginPayload) => {
+    if (isLoading) return;
     setIsLoading(true);
     try {
       const response = await authService.login(payload);

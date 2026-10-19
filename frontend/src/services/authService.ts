@@ -50,6 +50,8 @@ const validateOrgEmail = (email: string): boolean => {
   return normalized.endsWith(`@${ORG_DOMAIN}`);
 };
 
+let inFlightLoginPromise: Promise<AuthResponse> | null = null;
+
 export const authService = {
   async register(data: RegisterPayload): Promise<AuthResponse> {
     // Client-side org domain check before hitting backend
@@ -91,29 +93,40 @@ export const authService = {
       throw new Error(`Only official @${ORG_DOMAIN} email addresses are permitted.`);
     }
 
-    try {
-      const result = await apiClient.post('/auth/login', {
-        email: emailNorm,
-        password: data.password,
-      }, { skipAuth: true });
-
-      const authData = result.data || result;
-      const token = authData.token;
-      const user = authData.user;
-
-      if (token) {
-        localStorage.setItem('auth_token', token);
-        localStorage.setItem('auth_user', JSON.stringify(user));
-      }
-
-      return {
-        message: result.message || 'Login successful',
-        token,
-        user,
-      };
-    } catch (networkErr: any) {
-      throw new Error(networkErr.message || 'Login failed');
+    // Reuse active in-flight request if one is already processing to guarantee exactly 1 request
+    if (inFlightLoginPromise) {
+      return inFlightLoginPromise;
     }
+
+    inFlightLoginPromise = (async () => {
+      try {
+        const result = await apiClient.post('/auth/login', {
+          email: emailNorm,
+          password: data.password,
+        }, { skipAuth: true });
+
+        const authData = result.data || result;
+        const token = authData.token;
+        const user = authData.user;
+
+        if (token) {
+          localStorage.setItem('auth_token', token);
+          localStorage.setItem('auth_user', JSON.stringify(user));
+        }
+
+        return {
+          message: result.message || 'Login successful',
+          token,
+          user,
+        };
+      } catch (networkErr: any) {
+        throw new Error(networkErr.message || 'Login failed');
+      } finally {
+        inFlightLoginPromise = null;
+      }
+    })();
+
+    return inFlightLoginPromise;
   },
 
   async getMe(): Promise<{ user: AuthUser }> {

@@ -26,6 +26,7 @@ export const Login: React.FC = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const isSubmittingRef = React.useRef(false);
 
   const [searchParams] = useSearchParams();
   // Pick up any error message the backend injected via redirect (e.g., domain restriction)
@@ -58,6 +59,9 @@ export const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmittingRef.current || loading) {
+      return;
+    }
     setError(null);
 
     const emailNorm = email.trim().toLowerCase();
@@ -66,6 +70,7 @@ export const Login: React.FC = () => {
       return;
     }
 
+    isSubmittingRef.current = true;
     setLoading(true);
     try {
       await login({ email: emailNorm, password });
@@ -75,6 +80,7 @@ export const Login: React.FC = () => {
     } catch (err: any) {
       setError(err.message || 'Invalid credentials. Please try again.');
     } finally {
+      isSubmittingRef.current = false;
       setLoading(false);
     }
   };
