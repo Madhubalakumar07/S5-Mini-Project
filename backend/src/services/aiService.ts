@@ -50,7 +50,7 @@ export class AIService {
       });
 
       if (!res.ok) {
-        console.warn(`Gemini API returned status ${res.status}, falling back to built-in AI engine.`);
+        console.warn(`Gemini API returned status ${res.status}, falling back to secondary provider.`);
         return null;
       }
 
@@ -58,10 +58,65 @@ export class AIService {
       const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
       return text || null;
     } catch (err) {
-      console.warn('Gemini API call failed, using built-in AI engine:', err);
+      console.warn('Gemini API call failed, falling back to secondary provider:', err);
       return null;
     }
   }
+
+  /**
+   * Helper to call Groq API when GROQ_API_KEY is available
+   */
+  private async callGroqAPI(prompt: string, systemInstruction?: string): Promise<string | null> {
+    const apiKey = (config.groqApiKey || process.env.GROQ_API_KEY || '').replace(/^["']|["']$/g, '').trim();
+    if (!apiKey || apiKey === 'your_api_key') return null;
+
+    try {
+      const messages: any[] = [];
+      if (systemInstruction) {
+        messages.push({ role: 'system', content: systemInstruction });
+      }
+      messages.push({ role: 'user', content: prompt });
+
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: config.groqModel || 'openai/gpt-oss-120b',
+          messages,
+          temperature: 0.4,
+          max_tokens: 1500,
+        }),
+      });
+
+      if (!res.ok) {
+        console.warn(`Groq chat API returned status ${res.status}`);
+        return null;
+      }
+
+      const data = await res.json();
+      return data?.choices?.[0]?.message?.content || null;
+    } catch (err) {
+      console.warn('Groq chat API call failed:', err);
+      return null;
+    }
+  }
+
+  /**
+   * Unified LLM caller: attempts Gemini first, then Groq, then returns null for built-in rule engine
+   */
+  private async callLLM(prompt: string, systemInstruction?: string): Promise<string | null> {
+    const geminiRes = await this.callGeminiAPI(prompt, systemInstruction);
+    if (geminiRes) return geminiRes;
+
+    const groqRes = await this.callGroqAPI(prompt, systemInstruction);
+    if (groqRes) return groqRes;
+
+    return null;
+  }
+
 
   /**
    * Analyze student for a company recruitment drive
@@ -145,6 +200,8 @@ Return ONLY a valid JSON object matching this TypeScript structure (no markdown 
         }
       }
     }
+
+
 
     // Built-in intelligent academic extraction engine
     return this.generateBuiltinStudySummary(cleanText, docTitle, topicContext);
@@ -352,6 +409,8 @@ Guidelines:
         };
       }
     }
+
+
 
     // Built-in Intelligent Response Generation (when Gemini API is offline or not set)
     

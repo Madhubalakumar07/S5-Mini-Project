@@ -76,7 +76,9 @@ export interface StudentActualData {
 }
 
 export class GroqService {
-  public readonly model = 'openai/gpt-oss-120b';
+  public get model(): string {
+    return config.groqModel || 'openai/gpt-oss-120b';
+  }
   public readonly apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
 
   /**
@@ -235,8 +237,8 @@ export class GroqService {
     const studentData = await this.fetchStudentData(studentId);
 
     // Step 2: Validate Groq API key
-    const apiKey = config.groqApiKey ? config.groqApiKey.trim() : '';
-    const isMissingKey = !apiKey || apiKey === 'your_api_key';
+    const apiKey = (config.groqApiKey || process.env.GROQ_API_KEY || '').replace(/^["']|["']$/g, '').trim();
+    const isMissingKey = !apiKey || apiKey === 'your_api_key' || apiKey === 'undefined' || apiKey === 'null';
 
     if (isMissingKey) {
       const err = new Error(

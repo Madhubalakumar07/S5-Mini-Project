@@ -32,14 +32,21 @@ async function request<T = any>(
     headers,
   });
 
-  const data = await response.json();
+  const responseText = await response.text();
+  let data: any;
+  try {
+    data = responseText ? JSON.parse(responseText) : {};
+  } catch {
+    data = { message: responseText || `Request failed with status ${response.status}` };
+  }
 
   if (!response.ok) {
-    // Use the backend's standardized error message
-    throw new Error(data?.message || `Request failed with status ${response.status}`);
+    // Use the backend's standardized error message or fallback
+    throw new Error(data?.message || data?.error?.message || `Request failed with status ${response.status}`);
   }
 
   return data;
+
 }
 
 export const apiClient = {

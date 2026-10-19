@@ -13,6 +13,7 @@ import { sendSuccess, sendError } from './utils/responseUtils.js';
 import { testDbConnection } from './config/db.js';
 import { initDb } from './config/initDb.js';
 
+// Configure and load environment variables
 dotenv.config();
 
 const app = express();
