@@ -34,6 +34,173 @@ const quickPrompts = [
   { label: '💻 DSA Roadmap', prompt: 'Recommend key DSA topics and LeetCode problems for my current level.' },
 ];
 
+const renderInlineMarkdown = (text: string) => {
+  const tokens = text.split(/(\*\*.*?\*\*|`.*?`)/g);
+  return tokens.map((token, i) => {
+    if (token.startsWith('**') && token.endsWith('**')) {
+      return <strong key={i} className="font-semibold text-slate-900">{token.slice(2, -2)}</strong>;
+    }
+    if (token.startsWith('`') && token.endsWith('`')) {
+      return (
+        <code key={i} className="px-1.5 py-0.5 bg-slate-100 text-slate-800 rounded font-mono text-[11px] border border-slate-200">
+          {token.slice(1, -1)}
+        </code>
+      );
+    }
+    return token;
+  });
+};
+
+const MarkdownBlock: React.FC<{ text: string }> = ({ text }) => {
+  const lines = text.split('\n');
+  const elements: React.ReactNode[] = [];
+  let inTable = false;
+  let tableRows: string[][] = [];
+
+  const flushTable = (key: number) => {
+    if (tableRows.length > 0) {
+      const header = tableRows[0];
+      const rows = tableRows.slice(1).filter(r => !r.every(c => /^[-:\s]+$/.test(c)));
+      elements.push(
+        <div key={`table-${key}`} className="my-2.5 overflow-x-auto rounded-lg border border-gray-200">
+          <table className="min-w-full text-xs text-left">
+            <thead className="bg-slate-100 font-semibold text-gray-700">
+              <tr>
+                {header.map((col, idx) => (
+                  <th key={idx} className="px-3 py-2 border-b border-gray-200">{col.trim()}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 bg-white">
+              {rows.map((row, rIdx) => (
+                <tr key={rIdx} className="hover:bg-slate-50/50">
+                  {row.map((cell, cIdx) => (
+                    <td key={cIdx} className="px-3 py-1.5 text-gray-700">{renderInlineMarkdown(cell.trim())}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+      tableRows = [];
+      inTable = false;
+    }
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+      inTable = true;
+      const cells = trimmed.slice(1, -1).split('|');
+      tableRows.push(cells);
+      continue;
+    } else if (inTable) {
+      flushTable(i);
+    }
+
+    if (!trimmed) {
+      elements.push(<div key={`spacer-${i}`} className="h-1" />);
+      continue;
+    }
+
+    if (trimmed.startsWith('### ')) {
+      elements.push(
+        <h4 key={`h3-${i}`} className="text-sm font-bold text-slate-900 mt-2 mb-1 flex items-center gap-1.5">
+          {renderInlineMarkdown(trimmed.slice(4))}
+        </h4>
+      );
+    } else if (trimmed.startsWith('#### ')) {
+      elements.push(
+        <h5 key={`h4-${i}`} className="text-xs font-bold text-slate-800 mt-1.5 mb-1">
+          {renderInlineMarkdown(trimmed.slice(5))}
+        </h5>
+      );
+    } else if (trimmed.startsWith('## ')) {
+      elements.push(
+        <h3 key={`h2-${i}`} className="text-base font-extrabold text-slate-900 mt-2.5 mb-1.5">
+          {renderInlineMarkdown(trimmed.slice(3))}
+        </h3>
+      );
+    } else if (trimmed.startsWith('> ')) {
+      elements.push(
+        <blockquote key={`quote-${i}`} className="border-l-4 border-brand-500 pl-3 py-1 my-1.5 bg-brand-50/40 text-xs italic text-gray-700 rounded-r">
+          {renderInlineMarkdown(trimmed.slice(2))}
+        </blockquote>
+      );
+    } else if (/^[-*•]\s/.test(trimmed)) {
+      elements.push(
+        <div key={`li-${i}`} className="flex items-start gap-2 ml-1 text-xs text-gray-700 my-0.5">
+          <span className="text-brand-600 font-bold mt-0.5">•</span>
+          <span>{renderInlineMarkdown(trimmed.replace(/^[-*•]\s/, ''))}</span>
+        </div>
+      );
+    } else if (/^\d+\.\s/.test(trimmed)) {
+      const match = trimmed.match(/^(\d+)\.\s(.*)/);
+      elements.push(
+        <div key={`num-${i}`} className="flex items-start gap-2 ml-1 text-xs text-gray-700 my-0.5">
+          <span className="font-bold text-brand-700 text-[11px] min-w-[16px]">{match ? match[1] : ''}.</span>
+          <span>{renderInlineMarkdown(match ? match[2] : trimmed)}</span>
+        </div>
+      );
+    } else {
+      elements.push(
+        <p key={`p-${i}`} className="text-xs text-gray-700 leading-relaxed my-1">
+          {renderInlineMarkdown(trimmed)}
+        </p>
+      );
+    }
+  }
+
+  if (inTable) {
+    flushTable(lines.length);
+  }
+
+  return <>{elements}</>;
+};
+
+const FormattedMessage: React.FC<{ content: string; isUser: boolean }> = ({ content, isUser }) => {
+  if (isUser) {
+    return <div className="whitespace-pre-wrap text-inherit text-sm">{content}</div>;
+  }
+
+  const parts = content.split(/(```[\s\S]*?```)/g);
+
+  return (
+    <div className="space-y-1.5 text-inherit leading-relaxed">
+      {parts.map((part, index) => {
+        if (part.startsWith('```') && part.endsWith('```')) {
+          const firstLineBreak = part.indexOf('\n');
+          const lang = part.slice(3, firstLineBreak).trim();
+          const code = part.slice(firstLineBreak + 1, -3);
+
+          return (
+            <div key={index} className="my-2 rounded-xl overflow-hidden border border-slate-700 bg-slate-900 text-slate-100 shadow-md">
+              <div className="flex items-center justify-between px-3 py-1 bg-slate-800 text-[10px] text-slate-400 font-mono border-b border-slate-700">
+                <span>{lang || 'code'}</span>
+                <button
+                  type="button"
+                  onClick={() => navigator.clipboard.writeText(code)}
+                  className="hover:text-white transition-colors"
+                >
+                  Copy
+                </button>
+              </div>
+              <pre className="p-3 text-[11px] font-mono overflow-x-auto text-emerald-300">
+                <code>{code}</code>
+              </pre>
+            </div>
+          );
+        }
+
+        return <MarkdownBlock key={index} text={part} />;
+      })}
+    </div>
+  );
+};
+
 export const AIMentorDrawer: React.FC<AIMentorDrawerProps> = ({
   isOpen,
   onClose,
@@ -407,9 +574,7 @@ The Transport Layer is responsible for process-to-process delivery of messages.
                           }`}
                         >
                           {/* Message content */}
-                          <div className="whitespace-pre-line prose prose-sm max-w-none text-inherit">
-                            {msg.text}
-                          </div>
+                          <FormattedMessage content={msg.text} isUser={msg.role === 'user'} />
 
                           {/* Company analysis card snippet if attached */}
                           {msg.companyAnalysis && (

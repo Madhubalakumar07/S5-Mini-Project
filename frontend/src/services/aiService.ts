@@ -124,36 +124,8 @@ export const aiService = {
       });
       return response.data || response;
     } catch (err: any) {
-      console.warn('Backend chat API failed, using intelligent client-side mentor:', err);
-
-      const lower = message.toLowerCase();
-      
-      // Client-side intelligent company guidance fallback
-      if (lower.includes('zoho') || companyId === 'zoho') {
-        return {
-          text: `### 🏢 **Zoho Corporation — Placement & Recruitment Intelligence**\n\n💼 **Package / CTC:** 5.00 - 8.50 LPA  \n📊 **Selection Ratio:** ~5-8% | **Difficulty:** Medium-Hard  \n🎯 **Your Estimated Readiness:** **82%** (✅ CGPA Eligible)\n\n#### 📋 **Recruitment Stages & Procedures (Previous Drives):**\n\n**Round 1: General Aptitude & C/Java Logic** (90 Mins) 🔴 *Elimination*\n• **Focus:** 25 Aptitude MCQs + 25 Technical C/Java code tracing snippets (pointer arithmetic, recursion, operator precedence).\n• **Crucial Pro-Tip:** Do not use built-in library shortcuts in dry runs; watch out for pre/post-increment edge cases.\n\n**Round 2: Basic Programming** (90 Mins, 5-7 Problems) 🔴 *Elimination*\n• **Focus:** Pure logic problems without built-in library functions (e.g., Matrix spirals, String expansion "a1b10" -> "abbbbbbbbbb", Pattern printing).\n\n**Round 3: Advanced App Development** (2.5 - 3 Hours) 🔴 *Elimination*\n• **Focus:** Build a complete console application with menu loops, class models, validations, and state handling (e.g., Railway Reservation System, Taxi Booking, Dungeon Game).\n\n**Round 4 & 5: Technical Interview & HR** (60 Mins)\n• **Focus:** OOP 4 pillars, Database 3NF design, Live whiteboard coding on Linked Lists/Trees, and Culture fit.\n\n💡 *Tip: Ask me "Give me a Round 2 practice coding question for Zoho" to practice!*`,
-          actionType: 'company_guidance'
-        };
-      }
-
-      if (lower.includes('tcs') || companyId === 'tcs') {
-        return {
-          text: `### 🏢 **Tata Consultancy Services (TCS) — Placement Intelligence**\n\n💼 **Package:** Ninja (3.36 LPA) • Digital (7.0 LPA) • Prime (9.0 LPA)  \n📊 **Selection Ratio:** ~15-20% | **Difficulty:** Medium  \n🎯 **Your Estimated Readiness:** **88%** (✅ CGPA Eligible)\n\n#### 📋 **Recruitment Stages (TCS NQT):**\n\n**Round 1: TCS NQT (Foundation + Advanced Section)** (165 Mins) 🔴 *Elimination*\n• **Foundation (75 Mins):** Numerical Ability (20 Qs), Verbal Ability (25 Qs), Reasoning Ability (20 Qs).\n• **Advanced (90 Mins):** Advanced Quantitative, Advanced Reasoning, and 2 Hands-on Coding questions in Java/C++/Python.\n• **Pro-Tip:** Attempt all cognitive questions (no negative marking). Solving 1 full + 1 partial code unlocks Digital/Prime tier!\n\n**Round 2: Technical Interview (TR)** (30 - 45 Mins)\n• **Focus:** SQL Joins & Subqueries, OOPs, Final Year / Mini Project code walkthrough, and Basic DSA.\n\n**Round 3: Managerial & HR (MR/HR)** (20 Mins)\n• **Focus:** Willingness to relocate across India, night shifts, and adaptability.`,
-          actionType: 'company_guidance'
-        };
-      }
-
-      if (lower.includes('tcp') && (lower.includes('udp') || lower.includes('difference') || lower.includes('vs'))) {
-        return {
-          text: `### 🌐 **TCP vs UDP — Core Computer Networks Comparison**\n\n| Feature | TCP | UDP |\n| :--- | :--- | :--- |\n| **Connection** | Connection-oriented (3-Way Handshake: SYN -> SYN-ACK -> ACK) | Connectionless (No handshake) |\n| **Reliability** | Guaranteed (ACKs, Retransmission, Flow control) | Best-effort, no ACK guarantee |\n| **Header Size** | 20 to 60 Bytes | 8 Bytes |\n| **Speed** | Moderate due to overhead | Blazing fast, minimal latency |\n| **Use Cases** | Web (HTTP/HTTPS), SSH, FTP, Email (SMTP) | Video Streaming, DNS, VoIP, Online Gaming |\n\n💡 **Exam Diagram Tip:** Draw the 3-Way Handshake timing diagram for full 8/16 marks in Computer Networks exams.`,
-          actionType: 'academic_guidance'
-        };
-      }
-
-      return {
-        text: `Hello Arun! 👋 I am your **CampusAI Academic & Placement Mentor**.\n\nHere is how I can assist you right now:\n1. 🏢 **Company Recruitment Breakdown:** Ask me about **Zoho, TCS, Infosys, Accenture, or Product Companies** for complete round-by-round procedures and previous asked coding problems.\n2. 📄 **PDF Study Material Summarizer:** Upload multiple PDF notes or slides to get instant executive summaries, key formulas, and 16-mark university exam questions.\n3. 🌐 **Core CS Subject Mentorship:** Ask any question in **Computer Networks, Operating Systems, DBMS, DSA, or OOPs**.\n\nWhat would you like to prepare today?`,
-        actionType: 'general'
-      };
+      console.error('AI chat request failed:', err);
+      throw new Error(err.message || 'Unable to get response from AI Mentor. Please check your network and backend connection.');
     }
   },
 
